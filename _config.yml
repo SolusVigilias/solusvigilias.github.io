@@ -1,0 +1,31 @@
+title: "Solus Vigilias — MirrorVerse"
+description: "MirrorVerse: Infinite Degrees of Freedom & Possibility"
+baseurl: ""
+url: "https://solusvigilias.github.io"
+
+author:
+  name: "Solus Vigilias"
+  alt: "Yuhao Li"
+  github: "solusvigilias"
+
+theme: null
+markdown: kramdown
+kramdown:
+  input: GFM
+permalink: /posts/:title/
+
+nav:
+  - name: "Home"
+    link: "/"
+  - name: "Book"
+    link: "/book"
+  - name: "Project"
+    link: "/project"
+  - name: "Chat"
+    link: "/chat"
+  - name: "About"
+    link: "/about"
+
+og_image: "/og-card.png"
+
+plugins: []

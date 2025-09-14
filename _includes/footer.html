@@ -1,0 +1,5 @@
+<footer class="site-footer">
+  © <span id="y"></span> {{ site.author.name }}
+  · <a href="https://github.com/{{ site.author.github }}" target="_blank" rel="noopener">GitHub</a>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</footer>

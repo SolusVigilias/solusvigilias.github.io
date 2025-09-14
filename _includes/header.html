@@ -1,0 +1,14 @@
+<header class="site-header">
+  <a class="brand" href="{{ site.baseurl }}/">
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <h1>{{ site.title }}</h1>
+      <div class="tag">{{ site.description }}</div>
+    </div>
+  </a>
+  <nav class="nav">
+    {% for item in site.nav %}
+      <a href="{{ item.link | prepend: site.baseurl }}">{{ item.name }}</a>
+    {% endfor %}
+  </nav>
+</header>
