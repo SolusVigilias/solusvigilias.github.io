@@ -36,7 +36,7 @@ Each controller optimizes its **exploration temperature (αₜ)** in response to
 ### 🔍 From Local to Global Adaptation
 
 In this framework:
-- Each user’s covariance matrix defines their **local field constraint**, continuously evolving with experience and interaction.
+- Each user’s covariance matrix defines their **local adaptive field**, continuously evolving with experience and interaction.
 - Aggregated regional covariance reflects **collective adaptability**, allowing communities to **reshape their structural entropy** together.
 - This feedback forms a **living system**—a distributed network that learns not just *within*, but *across* scales.
 
