@@ -2,7 +2,7 @@
   "release": "1.1",
   "date": "2026-09-07",
   "destination": "https://solusvigilias.com/lab/mirrorverse/",
-  "phase": "pre-publication",
+  "phase": "public-release-verified",
   "mathematicalTests": "passed: 15 groups / 323710 assertions",
   "independentCSV": "passed: 300288 rows / 276 schedule-method groups",
   "guide": "passed: five shared-engine stages, resets, predictions, 0.5 lower bound, 58/74-bit total costs",
@@ -10,6 +10,13 @@
   "lint": "passed focused application, model, encoding, guide, experiment",
   "workerBuild": "passed",
   "browserPreview": "passed: five stages, skip, focus moves to controls, Enter navigation, mobile390px no document overflow",
-  "publicVisitorVerification": "pending release; final record saved separately in release.md",
+  "publicVisitorVerification": {
+    "http": "Passed: 17 public files returned 200 and matched the tested build byte-for-byte; no authentication or cookies",
+    "existingPages": "Homepage, About and Book matched pre-release bytes; all 14 existing source root entries retained their Git object hashes",
+    "redirect": "/lab/mirrorverse redirects to /lab/mirrorverse/ and returns200",
+    "browser": "Five guide stages, keyboard navigation, mobile390px, plot, skip, focus and refresh passed on the identical production build locally. Public in-app navigation updated the URL/title but its inspection API repeatedly timed out, so live public interaction could not be independently completed.",
+    "testedDeployment": "https://github.com/SolusVigilias/solusvigilias.github.io/actions/runs/34114564364",
+    "testedApplicationCommit": "f0e8c7dc0cb3712cf069274cc324366f749ff9a1"
+  },
   "privatePreviewLimitation": "Old chatgpt.site origin still returns Cloudflare403 before application; no Worker errors returned. No bypass used."
 }
