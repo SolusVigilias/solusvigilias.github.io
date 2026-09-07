@@ -21,6 +21,8 @@ nav:
     link: "/book"
   - name: "Project"
     link: "/project"
+  - name: "Lab"
+    link: "/lab/mirrorverse/"
   - name: "Chat"
     link: "/chat"
   - name: "About"
