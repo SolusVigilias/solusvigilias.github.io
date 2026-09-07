@@ -1,0 +1,5186 @@
+{
+  "schemaVersion": 1,
+  "seed": 20260907,
+  "prng": "LCG: x=(1664525*x+1013904223) mod 2^32; u=x/2^32",
+  "initialStates": [
+    {
+      "a": 0,
+      "b": 0
+    },
+    {
+      "a": 0,
+      "b": 1
+    },
+    {
+      "a": 0,
+      "b": 2
+    },
+    {
+      "a": 0,
+      "b": 3
+    },
+    {
+      "a": 0,
+      "b": 4
+    },
+    {
+      "a": 0,
+      "b": 5
+    },
+    {
+      "a": 0,
+      "b": 6
+    },
+    {
+      "a": 0,
+      "b": 7
+    },
+    {
+      "a": 1,
+      "b": 0
+    },
+    {
+      "a": 1,
+      "b": 1
+    },
+    {
+      "a": 1,
+      "b": 2
+    },
+    {
+      "a": 1,
+      "b": 3
+    },
+    {
+      "a": 1,
+      "b": 4
+    },
+    {
+      "a": 1,
+      "b": 5
+    },
+    {
+      "a": 1,
+      "b": 6
+    },
+    {
+      "a": 1,
+      "b": 7
+    },
+    {
+      "a": 2,
+      "b": 0
+    },
+    {
+      "a": 2,
+      "b": 1
+    },
+    {
+      "a": 2,
+      "b": 2
+    },
+    {
+      "a": 2,
+      "b": 3
+    },
+    {
+      "a": 2,
+      "b": 4
+    },
+    {
+      "a": 2,
+      "b": 5
+    },
+    {
+      "a": 2,
+      "b": 6
+    },
+    {
+      "a": 2,
+      "b": 7
+    },
+    {
+      "a": 3,
+      "b": 0
+    },
+    {
+      "a": 3,
+      "b": 1
+    },
+    {
+      "a": 3,
+      "b": 2
+    },
+    {
+      "a": 3,
+      "b": 3
+    },
+    {
+      "a": 3,
+      "b": 4
+    },
+    {
+      "a": 3,
+      "b": 5
+    },
+    {
+      "a": 3,
+      "b": 6
+    },
+    {
+      "a": 3,
+      "b": 7
+    },
+    {
+      "a": 4,
+      "b": 0
+    },
+    {
+      "a": 4,
+      "b": 1
+    },
+    {
+      "a": 4,
+      "b": 2
+    },
+    {
+      "a": 4,
+      "b": 3
+    },
+    {
+      "a": 4,
+      "b": 4
+    },
+    {
+      "a": 4,
+      "b": 5
+    },
+    {
+      "a": 4,
+      "b": 6
+    },
+    {
+      "a": 4,
+      "b": 7
+    },
+    {
+      "a": 5,
+      "b": 0
+    },
+    {
+      "a": 5,
+      "b": 1
+    },
+    {
+      "a": 5,
+      "b": 2
+    },
+    {
+      "a": 5,
+      "b": 3
+    },
+    {
+      "a": 5,
+      "b": 4
+    },
+    {
+      "a": 5,
+      "b": 5
+    },
+    {
+      "a": 5,
+      "b": 6
+    },
+    {
+      "a": 5,
+      "b": 7
+    },
+    {
+      "a": 6,
+      "b": 0
+    },
+    {
+      "a": 6,
+      "b": 1
+    },
+    {
+      "a": 6,
+      "b": 2
+    },
+    {
+      "a": 6,
+      "b": 3
+    },
+    {
+      "a": 6,
+      "b": 4
+    },
+    {
+      "a": 6,
+      "b": 5
+    },
+    {
+      "a": 6,
+      "b": 6
+    },
+    {
+      "a": 6,
+      "b": 7
+    },
+    {
+      "a": 7,
+      "b": 0
+    },
+    {
+      "a": 7,
+      "b": 1
+    },
+    {
+      "a": 7,
+      "b": 2
+    },
+    {
+      "a": 7,
+      "b": 3
+    },
+    {
+      "a": 7,
+      "b": 4
+    },
+    {
+      "a": 7,
+      "b": 5
+    },
+    {
+      "a": 7,
+      "b": 6
+    },
+    {
+      "a": 7,
+      "b": 7
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "transfer",
+      "group": "transfer",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": null
+    },
+    {
+      "id": "add",
+      "group": "add",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": null
+    },
+    {
+      "id": "interaction",
+      "group": "interaction",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": null
+    },
+    {
+      "id": "safe",
+      "group": "safe",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": null
+    },
+    {
+      "id": "boundary",
+      "group": "boundary",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": null
+    },
+    {
+      "id": "mixed-00",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": 1716920206
+    },
+    {
+      "id": "mixed-01",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        }
+      ],
+      "seed": 3560907157
+    },
+    {
+      "id": "mixed-02",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 1922172400
+    },
+    {
+      "id": "mixed-03",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        }
+      ],
+      "seed": 3500597391
+    },
+    {
+      "id": "mixed-04",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 1079530658
+    },
+    {
+      "id": "mixed-05",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        }
+      ],
+      "seed": 4134914969
+    },
+    {
+      "id": "mixed-06",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 2440708132
+    },
+    {
+      "id": "mixed-07",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        }
+      ],
+      "seed": 2562100531
+    },
+    {
+      "id": "mixed-08",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 2213638390
+    },
+    {
+      "id": "mixed-09",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": 716813277
+    },
+    {
+      "id": "mixed-10",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 4129039256
+    },
+    {
+      "id": "mixed-11",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 1810059799
+    },
+    {
+      "id": "mixed-12",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 1307461770
+    },
+    {
+      "id": "mixed-13",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        }
+      ],
+      "seed": 938057313
+    },
+    {
+      "id": "mixed-14",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        }
+      ],
+      "seed": 2682233932
+    },
+    {
+      "id": "mixed-15",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        }
+      ],
+      "seed": 2175570747
+    },
+    {
+      "id": "mixed-16",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        }
+      ],
+      "seed": 4120833886
+    },
+    {
+      "id": "mixed-17",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 1762561829
+    },
+    {
+      "id": "mixed-18",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        }
+      ],
+      "seed": 1506932288
+    },
+    {
+      "id": "mixed-19",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        }
+      ],
+      "seed": 2155213983
+    },
+    {
+      "id": "mixed-20",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": 2775234930
+    },
+    {
+      "id": "mixed-21",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 1155516969
+    },
+    {
+      "id": "mixed-22",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        }
+      ],
+      "seed": 2757332340
+    },
+    {
+      "id": "mixed-23",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        }
+      ],
+      "seed": 329996867
+    },
+    {
+      "id": "mixed-24",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 1386494662
+    },
+    {
+      "id": "mixed-25",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 2609304429
+    },
+    {
+      "id": "mixed-26",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        }
+      ],
+      "seed": 2150243816
+    },
+    {
+      "id": "mixed-27",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 1915021351
+    },
+    {
+      "id": "mixed-28",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        }
+      ],
+      "seed": 1755137882
+    },
+    {
+      "id": "mixed-29",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        }
+      ],
+      "seed": 782462705
+    },
+    {
+      "id": "mixed-30",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 2390268828
+    },
+    {
+      "id": "mixed-31",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 3100312139
+    },
+    {
+      "id": "mixed-32",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 3137008430
+    },
+    {
+      "id": "mixed-33",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 2005901493
+    },
+    {
+      "id": "mixed-34",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        }
+      ],
+      "seed": 980368016
+    },
+    {
+      "id": "mixed-35",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 1031425199
+    },
+    {
+      "id": "mixed-36",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 2471072322
+    },
+    {
+      "id": "mixed-37",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 1340320953
+    },
+    {
+      "id": "mixed-38",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 3756093124
+    },
+    {
+      "id": "mixed-39",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 1042787155
+    },
+    {
+      "id": "mixed-40",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 3989878934
+    },
+    {
+      "id": "mixed-41",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        }
+      ],
+      "seed": 2151290621
+    },
+    {
+      "id": "mixed-42",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        }
+      ],
+      "seed": 591391800
+    },
+    {
+      "id": "mixed-43",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": -1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 2420392503
+    },
+    {
+      "id": "mixed-44",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 967260714
+    },
+    {
+      "id": "mixed-45",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        }
+      ],
+      "seed": 2033427329
+    },
+    {
+      "id": "mixed-46",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        }
+      ],
+      "seed": 4006389484
+    },
+    {
+      "id": "mixed-47",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 878802267
+    },
+    {
+      "id": "mixed-48",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        }
+      ],
+      "seed": 805776126
+    },
+    {
+      "id": "mixed-49",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        }
+      ],
+      "seed": 3132839493
+    },
+    {
+      "id": "mixed-50",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        }
+      ],
+      "seed": 3373191904
+    },
+    {
+      "id": "mixed-51",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": 4061456575
+    },
+    {
+      "id": "mixed-52",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 2531385106
+    },
+    {
+      "id": "mixed-53",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 2911531849
+    },
+    {
+      "id": "mixed-54",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        }
+      ],
+      "seed": 2022106132
+    },
+    {
+      "id": "mixed-55",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        }
+      ],
+      "seed": 1612480611
+    },
+    {
+      "id": "mixed-56",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        }
+      ],
+      "seed": 45345382
+    },
+    {
+      "id": "mixed-57",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 4075585165
+    },
+    {
+      "id": "mixed-58",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 681741960
+    },
+    {
+      "id": "mixed-59",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "interaction",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        }
+      ],
+      "seed": 4240597063
+    },
+    {
+      "id": "mixed-60",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        }
+      ],
+      "seed": 3952681210
+    },
+    {
+      "id": "mixed-61",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        }
+      ],
+      "seed": 1858288657
+    },
+    {
+      "id": "mixed-62",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": -2
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        }
+      ],
+      "seed": 2213594684
+    },
+    {
+      "id": "mixed-63",
+      "group": "mixed",
+      "events": [
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        },
+        {
+          "rule": "transfer",
+          "e": 1
+        },
+        {
+          "rule": "interaction",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": 1
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "add",
+          "e": -2
+        },
+        {
+          "rule": "interaction",
+          "e": 2
+        },
+        {
+          "rule": "add",
+          "e": -1
+        },
+        {
+          "rule": "transfer",
+          "e": 2
+        }
+      ],
+      "seed": 981527659
+    }
+  ],
+  "output": "a+b",
+  "depth": 16,
+  "tolerances": [
+    0,
+    2
+  ],
+  "approximation": "q=floor(b/4); decode bHat=4q; re-quantize after every transfer",
+  "sumBaseline": "bHat=0, fixed in schema; no fitted parameter",
+  "nuisanceExample": [
+    {
+      "a": 1,
+      "b": 3,
+      "u": 17,
+      "v": 201
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "u": 99,
+      "v": 8
+    }
+  ]
+}

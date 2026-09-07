@@ -1,0 +1,15 @@
+{
+  "release": "1.1",
+  "date": "2026-09-07",
+  "destination": "https://solusvigilias.com/lab/mirrorverse/",
+  "phase": "pre-publication",
+  "mathematicalTests": "passed: 15 groups / 323710 assertions",
+  "independentCSV": "passed: 300288 rows / 276 schedule-method groups",
+  "guide": "passed: five shared-engine stages, resets, predictions, 0.5 lower bound, 58/74-bit total costs",
+  "typecheck": "passed",
+  "lint": "passed focused application, model, encoding, guide, experiment",
+  "workerBuild": "passed",
+  "browserPreview": "passed: five stages, skip, focus moves to controls, Enter navigation, mobile390px no document overflow",
+  "publicVisitorVerification": "pending release; final record saved separately in release.md",
+  "privatePreviewLimitation": "Old chatgpt.site origin still returns Cloudflare403 before application; no Worker errors returned. No bypass used."
+}

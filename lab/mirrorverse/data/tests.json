@@ -1,0 +1,83 @@
+{
+  "tests": [
+    {
+      "name": "Required pair: exact full updates and compressed route counterexample",
+      "status": "pass",
+      "assertions": 8
+    },
+    {
+      "name": "Full and repaired commute for all 289 grid states × 15 events",
+      "status": "pass",
+      "assertions": 8670
+    },
+    {
+      "name": "Sum-only commutes for transfer and add throughout the finite grid",
+      "status": "pass",
+      "assertions": 2890
+    },
+    {
+      "name": "Fiber consistency: equal sums have compatible compressed transfer/add successors",
+      "status": "pass",
+      "assertions": 2560
+    },
+    {
+      "name": "Output recovery: total factors through sum; b does not",
+      "status": "pass",
+      "assertions": 1737
+    },
+    {
+      "name": "Coordinate invertibility: repaired representation preserves the whole pair",
+      "status": "pass",
+      "assertions": 289
+    },
+    {
+      "name": "Approximate quantization discards distinctions and can fail closure under transfer",
+      "status": "pass",
+      "assertions": 4
+    },
+    {
+      "name": "No initial collision, yet approximation can still fail: update-design counterexample",
+      "status": "pass",
+      "assertions": 2
+    },
+    {
+      "name": "Horizon is a prefix: cancellation does not erase an earlier boundary",
+      "status": "pass",
+      "assertions": 5
+    },
+    {
+      "name": "Exact observation supplies missing information without rewriting earlier errors",
+      "status": "pass",
+      "assertions": 4
+    },
+    {
+      "name": "Irrelevant variables: full and repaired remain exact across 64 mixed schedules",
+      "status": "pass",
+      "assertions": 257
+    },
+    {
+      "name": "Negative control: nuisance reduction fails if the output asks for u",
+      "status": "pass",
+      "assertions": 2
+    },
+    {
+      "name": "PRNG is reproducible and custom sequences validate and repeat",
+      "status": "pass",
+      "assertions": 4
+    },
+    {
+      "name": "Payload and all auxiliary fields round-trip through real packed serialization",
+      "status": "pass",
+      "assertions": 6986
+    },
+    {
+      "name": "Finite output-equivalence partitions: safe total needs 15 classes, interaction 64",
+      "status": "pass",
+      "assertions": 3
+    }
+  ],
+  "assertions": 323710,
+  "closureChecks": 11560,
+  "overflowCount": 0,
+  "allPassed": true
+}

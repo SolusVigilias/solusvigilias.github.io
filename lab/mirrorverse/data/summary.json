@@ -1,0 +1,4014 @@
+{
+  "schemaVersion": 1,
+  "seed": 20260907,
+  "testsPassed": 15,
+  "assertions": 323710,
+  "closureChecks": 11560,
+  "trajectoryCount": 17664,
+  "overflowCount": 0,
+  "summary": [
+    {
+      "scenario": "transfer",
+      "mode": "full",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "transfer",
+      "mode": "sum",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "scenario": "transfer",
+      "mode": "approx",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "scenario": "transfer",
+      "mode": "repaired",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "add",
+      "mode": "full",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "add",
+      "mode": "sum",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "scenario": "add",
+      "mode": "approx",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "scenario": "add",
+      "mode": "repaired",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "interaction",
+      "mode": "full",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "interaction",
+      "mode": "sum",
+      "schedules": 1,
+      "maxError": 112,
+      "mae": 28,
+      "worstHorizon": 0,
+      "meanHorizon": 0,
+      "worstHorizonTolerance2": 0,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "scenario": "interaction",
+      "mode": "approx",
+      "schedules": 1,
+      "maxError": 48,
+      "mae": 12,
+      "worstHorizon": 0,
+      "meanHorizon": 0,
+      "worstHorizonTolerance2": 0,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "scenario": "interaction",
+      "mode": "repaired",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "safe",
+      "mode": "full",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "safe",
+      "mode": "sum",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "scenario": "safe",
+      "mode": "approx",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "scenario": "safe",
+      "mode": "repaired",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "boundary",
+      "mode": "full",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "boundary",
+      "mode": "sum",
+      "schedules": 1,
+      "maxError": 98,
+      "mae": 21.61764705882353,
+      "worstHorizon": 2,
+      "meanHorizon": 2,
+      "worstHorizonTolerance2": 2,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "scenario": "boundary",
+      "mode": "approx",
+      "schedules": 1,
+      "maxError": 42,
+      "mae": 9.264705882352942,
+      "worstHorizon": 2,
+      "meanHorizon": 2,
+      "worstHorizonTolerance2": 2,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "scenario": "boundary",
+      "mode": "repaired",
+      "schedules": 1,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "mixed",
+      "mode": "full",
+      "schedules": 64,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    },
+    {
+      "scenario": "mixed",
+      "mode": "sum",
+      "schedules": 64,
+      "maxError": 44,
+      "mae": 4.596047794117648,
+      "worstHorizon": 0,
+      "meanHorizon": 3.171875,
+      "worstHorizonTolerance2": 0,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "scenario": "mixed",
+      "mode": "approx",
+      "schedules": 64,
+      "maxError": 67,
+      "mae": 6.596966911764707,
+      "worstHorizon": 0,
+      "meanHorizon": 3.171875,
+      "worstHorizonTolerance2": 0,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "scenario": "mixed",
+      "mode": "repaired",
+      "schedules": 64,
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "meanHorizon": 16,
+      "worstHorizonTolerance2": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    }
+  ],
+  "nuisanceSummary": [
+    {
+      "mode": "full",
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "stateBits": 48,
+      "totalBits": 165
+    },
+    {
+      "mode": "sum",
+      "maxError": 48,
+      "mae": 3.991474850809888,
+      "worstHorizon": 0,
+      "stateBits": 16,
+      "totalBits": 133
+    },
+    {
+      "mode": "approx",
+      "maxError": 67,
+      "mae": 8.3921568627451,
+      "worstHorizon": 0,
+      "stateBits": 24,
+      "totalBits": 141
+    },
+    {
+      "mode": "repaired",
+      "maxError": 0,
+      "mae": 0,
+      "worstHorizon": 16,
+      "stateBits": 32,
+      "totalBits": 149
+    }
+  ],
+  "nuisanceTrajectoryCount": 552,
+  "byStep": [
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "full",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "sum",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "approx",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "transfer",
+      "mode": "repaired",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "full",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "sum",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "approx",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "add",
+      "mode": "repaired",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "full",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 1,
+      "totalError": 224,
+      "n": 64,
+      "maxError": 7,
+      "mae": 3.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 2,
+      "totalError": 448,
+      "n": 64,
+      "maxError": 14,
+      "mae": 7
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 3,
+      "totalError": 672,
+      "n": 64,
+      "maxError": 21,
+      "mae": 10.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 4,
+      "totalError": 896,
+      "n": 64,
+      "maxError": 28,
+      "mae": 14
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 5,
+      "totalError": 1120,
+      "n": 64,
+      "maxError": 35,
+      "mae": 17.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 6,
+      "totalError": 1344,
+      "n": 64,
+      "maxError": 42,
+      "mae": 21
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 7,
+      "totalError": 1568,
+      "n": 64,
+      "maxError": 49,
+      "mae": 24.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 8,
+      "totalError": 1792,
+      "n": 64,
+      "maxError": 56,
+      "mae": 28
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 9,
+      "totalError": 2016,
+      "n": 64,
+      "maxError": 63,
+      "mae": 31.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 10,
+      "totalError": 2240,
+      "n": 64,
+      "maxError": 70,
+      "mae": 35
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 11,
+      "totalError": 2464,
+      "n": 64,
+      "maxError": 77,
+      "mae": 38.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 12,
+      "totalError": 2688,
+      "n": 64,
+      "maxError": 84,
+      "mae": 42
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 13,
+      "totalError": 2912,
+      "n": 64,
+      "maxError": 91,
+      "mae": 45.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 14,
+      "totalError": 3136,
+      "n": 64,
+      "maxError": 98,
+      "mae": 49
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 15,
+      "totalError": 3360,
+      "n": 64,
+      "maxError": 105,
+      "mae": 52.5
+    },
+    {
+      "group": "interaction",
+      "mode": "sum",
+      "t": 16,
+      "totalError": 3584,
+      "n": 64,
+      "maxError": 112,
+      "mae": 56
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 1,
+      "totalError": 96,
+      "n": 64,
+      "maxError": 3,
+      "mae": 1.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 2,
+      "totalError": 192,
+      "n": 64,
+      "maxError": 6,
+      "mae": 3
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 3,
+      "totalError": 288,
+      "n": 64,
+      "maxError": 9,
+      "mae": 4.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 4,
+      "totalError": 384,
+      "n": 64,
+      "maxError": 12,
+      "mae": 6
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 5,
+      "totalError": 480,
+      "n": 64,
+      "maxError": 15,
+      "mae": 7.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 6,
+      "totalError": 576,
+      "n": 64,
+      "maxError": 18,
+      "mae": 9
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 7,
+      "totalError": 672,
+      "n": 64,
+      "maxError": 21,
+      "mae": 10.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 8,
+      "totalError": 768,
+      "n": 64,
+      "maxError": 24,
+      "mae": 12
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 9,
+      "totalError": 864,
+      "n": 64,
+      "maxError": 27,
+      "mae": 13.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 10,
+      "totalError": 960,
+      "n": 64,
+      "maxError": 30,
+      "mae": 15
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 11,
+      "totalError": 1056,
+      "n": 64,
+      "maxError": 33,
+      "mae": 16.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 12,
+      "totalError": 1152,
+      "n": 64,
+      "maxError": 36,
+      "mae": 18
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 13,
+      "totalError": 1248,
+      "n": 64,
+      "maxError": 39,
+      "mae": 19.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 14,
+      "totalError": 1344,
+      "n": 64,
+      "maxError": 42,
+      "mae": 21
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 15,
+      "totalError": 1440,
+      "n": 64,
+      "maxError": 45,
+      "mae": 22.5
+    },
+    {
+      "group": "interaction",
+      "mode": "approx",
+      "t": 16,
+      "totalError": 1536,
+      "n": 64,
+      "maxError": 48,
+      "mae": 24
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "interaction",
+      "mode": "repaired",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "full",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "sum",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "approx",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "safe",
+      "mode": "repaired",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "full",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 3,
+      "totalError": 224,
+      "n": 64,
+      "maxError": 7,
+      "mae": 3.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 4,
+      "totalError": 448,
+      "n": 64,
+      "maxError": 14,
+      "mae": 7
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 5,
+      "totalError": 672,
+      "n": 64,
+      "maxError": 21,
+      "mae": 10.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 6,
+      "totalError": 896,
+      "n": 64,
+      "maxError": 28,
+      "mae": 14
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 7,
+      "totalError": 1120,
+      "n": 64,
+      "maxError": 35,
+      "mae": 17.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 8,
+      "totalError": 1344,
+      "n": 64,
+      "maxError": 42,
+      "mae": 21
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 9,
+      "totalError": 1568,
+      "n": 64,
+      "maxError": 49,
+      "mae": 24.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 10,
+      "totalError": 1792,
+      "n": 64,
+      "maxError": 56,
+      "mae": 28
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 11,
+      "totalError": 2016,
+      "n": 64,
+      "maxError": 63,
+      "mae": 31.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 12,
+      "totalError": 2240,
+      "n": 64,
+      "maxError": 70,
+      "mae": 35
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 13,
+      "totalError": 2464,
+      "n": 64,
+      "maxError": 77,
+      "mae": 38.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 14,
+      "totalError": 2688,
+      "n": 64,
+      "maxError": 84,
+      "mae": 42
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 15,
+      "totalError": 2912,
+      "n": 64,
+      "maxError": 91,
+      "mae": 45.5
+    },
+    {
+      "group": "boundary",
+      "mode": "sum",
+      "t": 16,
+      "totalError": 3136,
+      "n": 64,
+      "maxError": 98,
+      "mae": 49
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 3,
+      "totalError": 96,
+      "n": 64,
+      "maxError": 3,
+      "mae": 1.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 4,
+      "totalError": 192,
+      "n": 64,
+      "maxError": 6,
+      "mae": 3
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 5,
+      "totalError": 288,
+      "n": 64,
+      "maxError": 9,
+      "mae": 4.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 6,
+      "totalError": 384,
+      "n": 64,
+      "maxError": 12,
+      "mae": 6
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 7,
+      "totalError": 480,
+      "n": 64,
+      "maxError": 15,
+      "mae": 7.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 8,
+      "totalError": 576,
+      "n": 64,
+      "maxError": 18,
+      "mae": 9
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 9,
+      "totalError": 672,
+      "n": 64,
+      "maxError": 21,
+      "mae": 10.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 10,
+      "totalError": 768,
+      "n": 64,
+      "maxError": 24,
+      "mae": 12
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 11,
+      "totalError": 864,
+      "n": 64,
+      "maxError": 27,
+      "mae": 13.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 12,
+      "totalError": 960,
+      "n": 64,
+      "maxError": 30,
+      "mae": 15
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 13,
+      "totalError": 1056,
+      "n": 64,
+      "maxError": 33,
+      "mae": 16.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 14,
+      "totalError": 1152,
+      "n": 64,
+      "maxError": 36,
+      "mae": 18
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 15,
+      "totalError": 1248,
+      "n": 64,
+      "maxError": 39,
+      "mae": 19.5
+    },
+    {
+      "group": "boundary",
+      "mode": "approx",
+      "t": 16,
+      "totalError": 1344,
+      "n": 64,
+      "maxError": 42,
+      "mae": 21
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 0,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 1,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 2,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 3,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 4,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 5,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 6,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 7,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 8,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 9,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 10,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 11,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 12,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 13,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 14,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 15,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "boundary",
+      "mode": "repaired",
+      "t": 16,
+      "totalError": 0,
+      "n": 64,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 0,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 1,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 2,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 3,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 4,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 5,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 6,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 7,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 8,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 9,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 10,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 11,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 12,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 13,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 14,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 15,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "full",
+      "t": 16,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 0,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 1,
+      "totalError": 5152,
+      "n": 4096,
+      "maxError": 14,
+      "mae": 1.2578125
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 2,
+      "totalError": 8000,
+      "n": 4096,
+      "maxError": 21,
+      "mae": 1.953125
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 3,
+      "totalError": 10320,
+      "n": 4096,
+      "maxError": 27,
+      "mae": 2.51953125
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 4,
+      "totalError": 11952,
+      "n": 4096,
+      "maxError": 27,
+      "mae": 2.91796875
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 5,
+      "totalError": 13264,
+      "n": 4096,
+      "maxError": 27,
+      "mae": 3.23828125
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 6,
+      "totalError": 15264,
+      "n": 4096,
+      "maxError": 27,
+      "mae": 3.7265625
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 7,
+      "totalError": 17136,
+      "n": 4096,
+      "maxError": 27,
+      "mae": 4.18359375
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 8,
+      "totalError": 18496,
+      "n": 4096,
+      "maxError": 34,
+      "mae": 4.515625
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 9,
+      "totalError": 20560,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 5.01953125
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 10,
+      "totalError": 22752,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 5.5546875
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 11,
+      "totalError": 25200,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 6.15234375
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 12,
+      "totalError": 27248,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 6.65234375
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 13,
+      "totalError": 28672,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 7
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 14,
+      "totalError": 30592,
+      "n": 4096,
+      "maxError": 43,
+      "mae": 7.46875
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 15,
+      "totalError": 32016,
+      "n": 4096,
+      "maxError": 44,
+      "mae": 7.81640625
+    },
+    {
+      "group": "mixed",
+      "mode": "sum",
+      "t": 16,
+      "totalError": 33408,
+      "n": 4096,
+      "maxError": 44,
+      "mae": 8.15625
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 0,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 1,
+      "totalError": 2208,
+      "n": 4096,
+      "maxError": 6,
+      "mae": 0.5390625
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 2,
+      "totalError": 4448,
+      "n": 4096,
+      "maxError": 12,
+      "mae": 1.0859375
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 3,
+      "totalError": 7232,
+      "n": 4096,
+      "maxError": 15,
+      "mae": 1.765625
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 4,
+      "totalError": 9664,
+      "n": 4096,
+      "maxError": 15,
+      "mae": 2.359375
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 5,
+      "totalError": 11776,
+      "n": 4096,
+      "maxError": 17,
+      "mae": 2.875
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 6,
+      "totalError": 14624,
+      "n": 4096,
+      "maxError": 17,
+      "mae": 3.5703125
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 7,
+      "totalError": 17632,
+      "n": 4096,
+      "maxError": 23,
+      "mae": 4.3046875
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 8,
+      "totalError": 21888,
+      "n": 4096,
+      "maxError": 27,
+      "mae": 5.34375
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 9,
+      "totalError": 26176,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 6.390625
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 10,
+      "totalError": 31072,
+      "n": 4096,
+      "maxError": 36,
+      "mae": 7.5859375
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 11,
+      "totalError": 36288,
+      "n": 4096,
+      "maxError": 39,
+      "mae": 8.859375
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 12,
+      "totalError": 42272,
+      "n": 4096,
+      "maxError": 51,
+      "mae": 10.3203125
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 13,
+      "totalError": 47936,
+      "n": 4096,
+      "maxError": 51,
+      "mae": 11.703125
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 14,
+      "totalError": 55008,
+      "n": 4096,
+      "maxError": 51,
+      "mae": 13.4296875
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 15,
+      "totalError": 61856,
+      "n": 4096,
+      "maxError": 55,
+      "mae": 15.1015625
+    },
+    {
+      "group": "mixed",
+      "mode": "approx",
+      "t": 16,
+      "totalError": 69280,
+      "n": 4096,
+      "maxError": 67,
+      "mae": 16.9140625
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 0,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 1,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 2,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 3,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 4,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 5,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 6,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 7,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 8,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 9,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 10,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 11,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 12,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 13,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 14,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 15,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    },
+    {
+      "group": "mixed",
+      "mode": "repaired",
+      "t": 16,
+      "totalError": 0,
+      "n": 4096,
+      "maxError": 0,
+      "mae": 0
+    }
+  ],
+  "partitions": {
+    "initialDomainSize": 64,
+    "safeTotalClasses": 15,
+    "interactionDepth1Classes": 64,
+    "componentBClasses": 8
+  }
+}

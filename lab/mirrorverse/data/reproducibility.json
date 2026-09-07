@@ -1,0 +1,11 @@
+{
+  "identicalAcrossTwoRuns": true,
+  "sha256": {
+    "scenarios.json": "6e1c63f0fa175f5255bf51d2ebb5ed549952c8fc3788e3bcde02cdc638a085e5",
+    "summary.json": "43bc24522df369653e6a1d8205750027a0e62ea7b3b9231a33a2ff97910745d1",
+    "metrics.csv": "2a7fb2136c62e9730d5c663e166ab9c5c3d22cde337b07e9a020423389504daf",
+    "traces.csv": "11e63521e82fcb0efd0290a8bc48c1fa2b6262947f73f43e5265ce81ed184730",
+    "tests.json": "e354399c8c80f8d752ac140d5356cb8d0d227782a8b0ed4562b23a2a254902b2",
+    "nuisance-metrics.csv": "40c87408efec33cb8901a013de71811bf72fe4e99513b07427629cfcb7ce24d9"
+  }
+}
