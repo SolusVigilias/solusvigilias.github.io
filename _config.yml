@@ -22,7 +22,7 @@ nav:
   - name: "Project"
     link: "/project"
   - name: "Lab"
-    link: "/lab/mirrorverse/"
+    link: "/lab/"
   - name: "Chat"
     link: "/chat"
   - name: "About"

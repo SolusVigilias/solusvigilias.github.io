@@ -10,13 +10,11 @@ Welcome. This is the home of **MirrorVerse** — a living philosophy of infinite
 - 💻 [MirrorVerse on GitHub](https://github.com/solusvigilias/mirrorverse)
 - ✨ [MirrorVerse Chat (coming soon)](/chat)
 
-<section class="lab-teaser" aria-labelledby="lab-title">
-  <div class="lab-teaser-heading">
-    <h2 id="lab-title">MirrorVerse Loop Lab</h2>
-    <span class="lab-label">Experimental</span>
-  </div>
-  <p>Explore when a simplified model can predict what happens next, where it fails, and what information helps repair it.</p>
-  <a class="lab-link" href="/lab/mirrorverse/">Try the Lab</a>
+<section class="labs-section" aria-labelledby="labs-title">
+  <h2 id="labs-title">Labs &amp; Experiments</h2>
+  <p>Interactive spaces to explore models, test ideas, and inspect decisions.</p>
+  {% include lab-cards.html heading_level=3 %}
+  <p><a class="lab-link" href="{{ '/lab/' | relative_url }}">Explore all labs &rarr;</a></p>
 </section>
 
 ## Latest Posts

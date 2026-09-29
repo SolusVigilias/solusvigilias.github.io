@@ -1,0 +1,20 @@
+{% assign lab_heading = include.heading_level | default: 2 %}
+<div class="lab-grid">
+  <article class="lab-card">
+    <span class="lab-label">Experimental</span>
+    <h{{ lab_heading }}>MirrorVerse Loop Lab</h{{ lab_heading }}>
+    <p>Explore when a simplified model can predict what happens next, where it fails, and what information helps repair it.</p>
+    <div class="lab-card-actions">
+      <a class="lab-link" href="{{ '/lab/mirrorverse/' | relative_url }}" aria-label="Open MirrorVerse Loop Lab">Open &rarr;</a>
+    </div>
+  </article>
+  <article class="lab-card">
+    <span class="lab-label">Experimental</span>
+    <h{{ lab_heading }}>Range Lab</h{{ lab_heading }}>
+    <p>Import GG cash-game hand histories, replay poker decisions, and explore player observations, weighted ranges, and expected value.</p>
+    <div class="lab-card-actions">
+      <a class="lab-link" href="{{ '/lab/range-lab/' | relative_url }}" aria-label="Open Range Lab">Open &rarr;</a>
+      <a class="lab-download" href="{{ '/lab/range-lab/range-lab-offline_v0.20.0.html' | relative_url }}" download>Download v0.20.0 HTML</a>
+    </div>
+  </article>
+</div>
