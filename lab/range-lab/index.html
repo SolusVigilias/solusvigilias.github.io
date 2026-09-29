@@ -409,26 +409,38 @@ function memory(hands,before=null){
  }
  return Object.values(stats).sort((a,b)=>b.hands-a.hands);
 }
-function straightHigh(ranks){const set=new Set(ranks);if(set.has(14))set.add(1);for(let n=14;n>=5;n--)if([0,1,2,3,4].every(d=>set.has(n-d)))return n;return 0;}
-function evaluate(cards){
- const ranks=cards.map(c=>14-RANKS.indexOf(c[0])).sort((a,b)=>b-a),counts=new Map(),suits={};
- for(let i=0;i<cards.length;i++){const r=14-RANKS.indexOf(cards[i][0]);counts.set(r,(counts.get(r)||0)+1);(suits[cards[i][1]]??=[]).push(r);}
- const groups=[...counts].sort((a,b)=>b[1]-a[1]||b[0]-a[0]),flush=Object.values(suits).find(s=>s.length>=5)?.sort((a,b)=>b-a),st=straightHigh(ranks);
- let cat=0,k=ranks.slice(0,5);
- if(flush&&straightHigh(flush)){cat=8;k=[straightHigh(flush)];}
- else if(groups[0]?.[1]===4){cat=7;k=[groups[0][0],...ranks.filter(r=>r!==groups[0][0]).slice(0,1)];}
- else if(groups[0]?.[1]>=3&&groups[1]?.[1]>=2){cat=6;k=[groups[0][0],groups[1][0]];}
- else if(flush){cat=5;k=flush.slice(0,5);}
- else if(st){cat=4;k=[st];}
- else if(groups[0]?.[1]===3){cat=3;k=[groups[0][0],...ranks.filter(r=>r!==groups[0][0]).slice(0,2)];}
- else if(groups[0]?.[1]===2&&groups[1]?.[1]===2){cat=2;const pairs=groups.filter(g=>g[1]===2).map(g=>g[0]).sort((a,b)=>b-a).slice(0,2);k=[...pairs,...ranks.filter(r=>!pairs.includes(r)).slice(0,1)];}
- else if(groups[0]?.[1]===2){cat=1;k=[groups[0][0],...ranks.filter(r=>r!==groups[0][0]).slice(0,3)];}
- let score=cat;for(let i=0;i<5;i++)score=score*15+(k[i]||0);
- return {score,category:cat,name:['High card','One pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush'][cat]};
+// Exact rank-mask evaluator. Work is linear in the number of cards; no sorting
+// or repeated Set/Map construction is needed. Scores preserve the original API.
+const cardCode=Object.fromEntries(DECK.map(c=>[c,[14-RANKS.indexOf(c[0]),'cdhs'.indexOf(c[1])]]));
+const straightTable=new Uint8Array(32768);
+for(let mask=0;mask<32768;mask++){
+ for(let high=14;high>=6;high--)if((mask&(31<<(high-4)))===(31<<(high-4))){straightTable[mask]=high;break;}
+ if(!straightTable[mask]&&(mask&16444)===16444)straightTable[mask]=5;
 }
-function bucket(cards,board){
+const categoryNames=['High card','One pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush'];
+function evaluate(cards){
+ const counts=new Uint8Array(15),suitCounts=new Uint8Array(4),suitMasks=new Uint16Array(4);let mask=0;
+ for(let i=0;i<cards.length;i++){const [rank,suit]=cardCode[cards[i]];counts[rank]++;suitCounts[suit]++;suitMasks[suit]|=1<<rank;mask|=1<<rank;}
+ let four=0,trip=0,pair=0,pair2=0,flush=-1;
+ for(let r=14;r>=2;r--){if(counts[r]===4)four=r;if(counts[r]>=3&&!trip)trip=r;if(counts[r]>=2){if(!pair)pair=r;else if(!pair2)pair2=r;}}
+ for(let suit=0;suit<4;suit++)if(suitCounts[suit]>=5){flush=suit;break;}
+ const kick=(exclude,n,source=mask)=>{const out=[];for(let r=14;r>=2&&out.length<n;r--)if((source&(1<<r))&&!exclude.includes(r))out.push(r);return out;};
+ let category=0,k=[];const sf=flush<0?0:straightTable[suitMasks[flush]],straight=straightTable[mask],house=trip?(pair===trip?pair2:pair):0;
+ if(sf){category=8;k=[sf];}
+ else if(four){category=7;k=[four,...kick([four],1)];}
+ else if(trip&&house){category=6;k=[trip,house];}
+ else if(flush>=0){category=5;k=kick([],5,suitMasks[flush]);}
+ else if(straight){category=4;k=[straight];}
+ else if(trip){category=3;k=[trip,...kick([trip],2)];}
+ else if(pair2){category=2;k=[pair,pair2,...kick([pair,pair2],1)];}
+ else if(pair){category=1;k=[pair,...kick([pair],3)];}
+ else k=kick([],5);
+ let score=category;for(let i=0;i<5;i++)score=score*15+(k[i]||0);
+ return {score,category,name:categoryNames[category]};
+}
+function bucket(cards,board,handEvaluation=null,boardEvaluation=null){
  if(board.length<3){const a=14-RANKS.indexOf(cards[0][0]),b=14-RANKS.indexOf(cards[1][0]);if(a===b&&a>=10||Math.min(a,b)>=12)return 'strong';if(a===b||Math.min(a,b)>=9||Math.max(a,b)===14)return 'made';if(cards[0][1]===cards[1][1]&&Math.abs(a-b)<=3)return 'draw';return 'air';}
- const all=[...cards,...board],e=evaluate(all),be=evaluate(board);
+ const all=[...cards,...board],e=handEvaluation||evaluate(all),be=boardEvaluation||evaluate(board);
  if(e.category>=2&&e.category>be.category)return 'strong';
  const counts={};all.forEach(c=>counts[c[1]]=(counts[c[1]]||0)+1);
  const r=[...new Set(all.map(c=>14-RANKS.indexOf(c[0])))];if(r.includes(14))r.push(1);
@@ -1089,7 +1101,7 @@ const __adaptation=(()=>{
 // this model. Sparse contexts share four action categories across legal sizes.
 const MEMORY_HALF_LIFE=8;
 const MEMORY_DECAY=2**(-1/MEMORY_HALF_LIFE);
-const RESPONSE_PRIOR=()=>({contexts:{},actions:0,logLoss:0});
+const RESPONSE_PRIOR=()=>({version:2,contexts:{},actions:0,logLoss:0});
 const RESPONSE_FEATURES=['strength','draw','paired board','suited board','connected board','call price','stack pressure','range advantage','perceived aggression','strength × price','draw × price','strength × texture','strength × range','bet size'];
 // Features use only the candidate holding and public state, never actual hidden cards.
 function responseFeatures(ctx,signal,draw,range,image){
@@ -1115,6 +1127,18 @@ function responseContext(ctx){
 }
 function responseCell(model,ctx){return model?.contexts?.[responseContext(ctx)];}
 function responseOffset(model,ctx,action,features=[]){const cell=responseCell(model,ctx),group=actionGroup(action);return (cell?.theta?.[group]||0)+features.reduce((n,x,i)=>n+x*(cell?.weights?.[group]?.[i]||0),0);}
+// Diagonal Gaussian assumed posterior over continuous contextual coefficients.
+// Four fixed antithetic draws integrate predictive action probabilities. This is
+// an approximate online Laplace/ADF model, not a calibrated exact posterior.
+const normals=Array.from({length:2},(_,sample)=>Array.from({length:60},(_,i)=>{const a=Math.sin((i+1)*12.9898+(sample+1)*78.233)*43758.5453,b=Math.sin((i+1)*39.346+(sample+1)*11.135)*24634.6345,u=Math.max(1e-8,a-Math.floor(a)),v=b-Math.floor(b);return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}));
+function responseEnsemble(model,ctx,rows){
+ const cell=responseCell(model,ctx),groups=['fold','check','call','bet'];
+ return Array.from({length:4},(_,sample)=>{
+  const logits=rows.map(a=>{const group=actionGroup(a),g=groups.indexOf(group),features=[1,...a.features],means=[cell?.theta?.[group]||0,...(cell?.weights?.[group]||RESPONSE_FEATURES.map(()=>0))],precision=cell?.precision?.[group]||features.map(()=>4),sign=sample%2?1:-1;
+   return Math.log(Math.max(1e-300,a.prob))+features.reduce((s,x,i)=>s+x*(means[i]+sign*normals[Math.floor(sample/2)][g*15+i]/Math.sqrt(precision[i])),0);
+  });const max=Math.max(...logits),weights=logits.map(x=>Math.exp(x-max)),total=weights.reduce((s,v)=>s+v,0);return weights.map(v=>v/total);
+ });
+}
 function trainResponse(model,ctx,update,event){
  if(!model)return;
  const key=responseContext(ctx),cell=model.contexts[key]??={n:0,counts:{fold:0,check:0,call:0,bet:0},theta:{fold:0,check:0,call:0,bet:0},logLoss:0};
@@ -1129,20 +1153,22 @@ function trainResponse(model,ctx,update,event){
   // Forget stale coefficients and keep a constant step size so a long session
   // does not become less responsive. This is discounted online gradient fitting,
   // not an exact batch minimizer of exponentially weighted likelihood.
-  cell.theta[name]=Math.max(-4,Math.min(4,MEMORY_DECAY*cell.theta[name]+.4*(update.gradient?.[name]||0)));
+  cell.precision??={};cell.precision[name]??=Array(RESPONSE_FEATURES.length+1).fill(4);
+  cell.precision[name]=cell.precision[name].map((v,i)=>Math.max(4,Math.min(10000,4+MEMORY_DECAY*(v-4)+(update.fisher?.[name]?.[i]||0))));
+  cell.theta[name]=Math.max(-4,Math.min(4,MEMORY_DECAY*cell.theta[name]+.4*(update.gradient?.[name]||0)/Math.sqrt(cell.precision[name][0]/4)));
   cell.weights??={};cell.weights[name]??=RESPONSE_FEATURES.map(()=>0);
-  cell.weights[name]=cell.weights[name].map((w,i)=>Math.max(-4,Math.min(4,MEMORY_DECAY*w+.4*(update.featureGradient?.[name]?.[i]||0))));
+  cell.weights[name]=cell.weights[name].map((w,i)=>Math.max(-4,Math.min(4,MEMORY_DECAY*w+.4*(update.featureGradient?.[name]?.[i]||0)/Math.sqrt(cell.precision[name][i+1]/4))));
  }
- cell.n++;cell.counts[group]++;cell.logLoss+=update.logLoss;model.actions++;model.logLoss+=update.logLoss;
+ cell.n++;cell.counts[group]++;cell.logLoss+=update.logLoss;model.actions++;model.logLoss+=update.logLoss;model.version=2;
 }
 
-return {MEMORY_HALF_LIFE,MEMORY_DECAY,RESPONSE_PRIOR,RESPONSE_FEATURES,responseFeatures,actionFeatures,actionGroup,responseContext,responseCell,responseOffset,trainResponse};
+return {MEMORY_HALF_LIFE,MEMORY_DECAY,RESPONSE_PRIOR,RESPONSE_FEATURES,responseFeatures,actionFeatures,actionGroup,responseContext,responseCell,responseOffset,responseEnsemble,trainResponse};
 })();
 const __policy=(()=>{
 const {snapshot,cashStrength,evaluate,bucket,RANKS}=__poker;
-const {responseOffset,responseFeatures,actionFeatures}=__adaptation;
-// Finite, deliberately interpretable hypotheses. None is a solved strategy.
-const POLICY_VERSION=4;
+const {responseFeatures,actionFeatures,responseEnsemble}=__adaptation;
+// Legacy saved-memory labels. Active inference uses continuous coefficients.
+const POLICY_VERSION=5;
 const TYPES=[
  {id:'neutral',label:'Neutral',tight:0,agg:1,bluff:1},
  {id:'tight',label:'Tight',tight:.065,agg:.85,bluff:.45},
@@ -1183,24 +1209,27 @@ function legalActions(ctx){
  const seen=new Set();for(const request of [min,...desired,cap]){const to=Math.min(cap,Math.max(Math.min(min,max),Math.round(request)));if(seen.has(to))continue;seen.add(to);out.push({id:'bet-'+to,kind:'bet',to,cost:to-p.streetContribution,label:(level?'Raise':'Bet')+' to '+(to/ctx.bb).toFixed(2)+' BB',allIn:to===max});}
  return out;
 }
-const signals=new Map();
-function handSignal(cards,board){
- if(!board.length)return cashStrength(cards);
+const signals=new Map(),boardEvaluations=new Map();
+function handFeatures(cards,board){
+ if(!board.length)return {signal:cashStrength(cards),draw:false};
  const key=cards.slice().sort().join('')+'|'+board.slice().sort().join('');if(signals.has(key))return signals.get(key);
- const e=evaluate([...cards,...board]),be=evaluate(board),b=bucket(cards,board),ranks=cards.map(c=>14-RANKS.indexOf(c[0]));
+ let be=boardEvaluations.get(board.join(''));if(!be){be=evaluate(board);if(boardEvaluations.size>=4000)boardEvaluations.delete(boardEvaluations.keys().next().value);boardEvaluations.set(board.join(''),be);}
+ const e=evaluate([...cards,...board]),b=bucket(cards,board,e,be),ranks=cards.map(c=>14-RANKS.indexOf(c[0]));
  let value=[.23,.59,.76,.86,.91,.95,.98,.995,.999][e.category];
  // A shared board hand is not private value. Top pair and overpairs differ from bottom pair.
  if(e.category<=be.category&&b!=='made'&&b!=='strong')value=.28+.012*Math.max(...ranks);
  if(e.category===1&&b==='made'){const boardRanks=board.map(c=>14-RANKS.indexOf(c[0]));const paired=Math.max(...ranks.filter(r=>boardRanks.includes(r)),cards[0][0]===cards[1][0]?ranks[0]:0);value=.48+.22*clamp((paired-Math.min(...boardRanks)+2)/(Math.max(...boardRanks)-Math.min(...boardRanks)+2));}
  if(b==='draw')value=Math.max(value,.48);
- value=clamp(value);if(signals.size>60000)signals.clear();signals.set(key,value);return value;
+ value=clamp(value);if(signals.size>60000)signals.clear();const result={signal:value,draw:b==='draw'};signals.set(key,result);return result;
 }
+
+function handSignal(cards,board){return handFeatures(cards,board).signal;}
 
 // A single normalized distribution over all available actions for each holding.
 // The range summary and image are public beliefs, never the other actual holding.
 function actionPolicy(ctx,cards,type=0,belief={}){
- const actions=ctx.actions||legalActions(ctx),p=ctx.players.find(p=>p.name===ctx.actor),t=TYPES[type]||TYPES[0];if(!actions.length)return [];
- const signal=handSignal(cards,ctx.board),owed=Math.max(0,ctx.level-p.streetContribution),call=Math.min(owed,p.stack),uncalled=ctx.players.length===2?Math.max(0,owed-call):0,price=call/Math.max(1,ctx.pot-uncalled+call),commit=call/Math.max(1,p.stack),pre=ctx.street==='Preflop',unopened=pre&&!ctx.raises;
+ const actions=ctx.actions||legalActions(ctx),p=ctx.players.find(p=>p.name===ctx.actor),t=ctx.legacyStyles?(TYPES[type]||TYPES[0]):TYPES[0];if(!actions.length)return [];
+ const handFeaturesValue=handFeatures(cards,ctx.board),signal=handFeaturesValue.signal,owed=Math.max(0,ctx.level-p.streetContribution),call=Math.min(owed,p.stack),uncalled=ctx.players.length===2?Math.max(0,owed-call):0,price=call/Math.max(1,ctx.pot-uncalled+call),commit=call/Math.max(1,p.stack),pre=ctx.street==='Preflop',unopened=pre&&!ctx.raises;
  let range=belief.strength??(pre?.62:.54),image=belief.aggression??1;
  if(belief.byCard){const a=belief.byCard[cards[0]]||[0,0,0],b=belief.byCard[cards[1]]||[0,0,0],both=belief.byCombo[cards.slice().sort().join('')]||[0,0,0],mass=1-a[0]-b[0]+both[0];if(mass>1e-10){range=(range-a[1]-b[1]+both[1])/mass;image=(image-a[2]-b[2]+both[2])/mass;}}
  const pressure=.26*(range-(pre?.62:.54))-.018*(image-1);
@@ -1225,10 +1254,10 @@ function actionPolicy(ctx,cards,type=0,belief={}){
  });
  const z=sizeWeights.reduce((n,x)=>n+x,0),betMass=bets.length?Math.min(continuation,aggression):0;let j=0;
  const rows=actions.map(a=>({...a,prob:a.kind==='fold'?1-continuation:a.kind==='call'||a.kind==='check'?continuation-betMass:betMass*sizeWeights[j++]/z}));
- // A small explicit lapse likelihood prevents any single observation ruling out a style.
- const features=responseFeatures(ctx,signal,ctx.board.length>0&&bucket(cards,ctx.board)==='draw',range,image);
- const adjusted=rows.map(a=>{const x=actionFeatures(features,ctx,a);return {...a,features:x,prob:a.prob*Math.exp(responseOffset(ctx.responseModel,ctx,a,x))};}),total=adjusted.reduce((n,a)=>n+a.prob,0);
- return adjusted.map(a=>({...a,modelProb:a.prob/total,prob:.999*a.prob/total+.001/rows.length}));
+ // A small explicit lapse likelihood prevents one observation eliminating a hand.
+ const features=responseFeatures(ctx,signal,handFeaturesValue.draw,range,image);
+ const featured=rows.map(a=>({...a,features:actionFeatures(features,ctx,a)})),ensemble=responseEnsemble(ctx.responseModel,ctx,featured);
+ return featured.map((a,i)=>{const modelProb=ensemble.reduce((s,row)=>s+row[i],0)/ensemble.length;return {...a,modelProb,prob:.999*modelProb+.001/rows.length,ensemble};});
 }
 function observedAction(rows,event){
  const kind=({folds:'fold',checks:'check',calls:'call',bets:'bet',raises:'bet'})[event.action]||event.kind;
@@ -1236,7 +1265,7 @@ function observedAction(rows,event){
  const to=event.to??event.amount;return candidates.sort((a,b)=>Math.abs(Math.log(a.to/to))-Math.abs(Math.log(b.to/to)))[0];
 }
 
-return {POLICY_VERSION,TYPES,TYPE_PRIOR,seeded,drawWeighted,publicContext,legalActions,handSignal,actionPolicy,observedAction};
+return {POLICY_VERSION,TYPES,TYPE_PRIOR,seeded,drawWeighted,publicContext,legalActions,handFeatures,handSignal,actionPolicy,observedAction};
 })();
 const __learning=(()=>{
 const {ALL_COMBOS,playerKey,snapshot,handClass}=__poker;
@@ -1244,7 +1273,7 @@ const {TYPES,TYPE_PRIOR,publicContext,legalActions,actionPolicy,observedAction,h
 const {RESPONSE_PRIOR,RESPONSE_FEATURES,actionGroup,trainResponse,MEMORY_DECAY}=__adaptation;
 function normalize(rows){const total=rows.reduce((n,r)=>n+r.prob,0);if(!(total>0))throw Error('No compatible probability mass remains. Widen the edited prior.');return rows.filter(r=>r.prob>0).map(r=>({...r,prob:r.prob/total}));}
 function newBelief(types=TYPE_PRIOR,weights=null){
- return normalize(ALL_COMBOS.flatMap(c=>TYPES.map((t,i)=>({cards:c.cards,key:c.key,cls:c.cls,type:i,prob:types[i]*(weights?(weights[c.cls]??0)/100:1)}))));
+ return normalize(ALL_COMBOS.map(c=>({cards:c.cards,key:c.key,cls:c.cls,type:0,prob:weights?(weights[c.cls]??0)/100:1}))); // Legacy style weights are retained only for save migration.
 }
 function conditionCards(rows,blocked=[],shown=null){const set=new Set(blocked);return normalize(rows.filter(r=>r.cards.every(c=>!set.has(c))&&(!shown||shown.every(c=>r.cards.includes(c)))));}
 function typeMass(rows){return rows.reduce((p,r)=>(p[r.type]+=r.prob,p),[0,0,0,0]);}
@@ -1252,21 +1281,42 @@ function beliefSummary(rows,board,own=[]){
  const valid=rows.filter(r=>r.cards.every(c=>!board.includes(c)&&!own.includes(c))),total=valid.reduce((n,r)=>n+r.prob,0);
  if(!total)return {strength:board.length?.54:.62,aggression:1};
  const out={strength:0,aggression:0,byCard:Object.create(null),byCombo:Object.create(null)};
- for(const r of valid){const mass=r.prob/total,strength=mass*handSignal(r.cards,board),aggression=mass*TYPES[r.type].agg;out.strength+=strength;out.aggression+=aggression;
+ for(const r of valid){const mass=r.prob/total,strength=mass*handSignal(r.cards,board),aggression=mass*(TYPES[r.type]?.agg??1);out.strength+=strength;out.aggression+=aggression;
   for(const c of [...r.cards,r.cards.slice().sort().join('')]){const map=c.length===2?out.byCard:out.byCombo,value=map[c]??=[0,0,0];value[0]+=mass;value[1]+=strength;value[2]+=aggression;}
  }
  return out;
 }
 function updateBelief(rows,ctx,event,opposing){
- const actions=ctx.actions||legalActions(ctx),context={...ctx,actions},gradient={fold:0,check:0,call:0,bet:0},featureGradient=Object.fromEntries(Object.keys(gradient).map(k=>[k,RESPONSE_FEATURES.map(()=>0)]));let evidence=0;
- const next=rows.map(r=>{const policy=actionPolicy(context,r.cards,r.type,opposing),a=observedAction(policy,event),prob=r.prob*(a?.prob??.000001);evidence+=prob;
-  if(a&&ctx.responseModel){const mass={fold:0,check:0,call:0,bet:0};for(const x of policy)mass[actionGroup(x)]+=x.modelProb;const scale=prob*.999*a.modelProb/a.prob;for(const key of Object.keys(gradient))gradient[key]+=scale*((key===actionGroup(a)?1:0)-mass[key]);
-   for(const x of policy){const target=featureGradient[actionGroup(x)],factor=scale*((x===a?1:0)-x.modelProb);for(let j=0;j<target.length;j++)target[j]+=factor*x.features[j];}
+ if(event.rangeLikelihood){const next=conditionAction(rows,event.rangeLikelihood),evidence=rows.reduce((s,r)=>s+r.prob*(event.rangeLikelihood[r.key]||0),0);return {rows:next,evidence,logLoss:-Math.log(Math.max(1e-300,evidence)),gradient:{fold:0,check:0,call:0,bet:0},featureGradient:Object.fromEntries(['fold','check','call','bet'].map(k=>[k,RESPONSE_FEATURES.map(()=>0)])),recordedPolicy:true};}
+ const actions=ctx.actions||legalActions(ctx),context={...ctx,actions},groups=['fold','check','call','bet'],gradient=Object.fromEntries(groups.map(k=>[k,0])),featureGradient=Object.fromEntries(groups.map(k=>[k,RESPONSE_FEATURES.map(()=>0)])),fisher=Object.fromEntries(groups.map(k=>[k,Array(RESPONSE_FEATURES.length+1).fill(0)]));let evidence=0;
+ const next=rows.map(r=>{
+  const policy=actionPolicy(context,r.cards,0,opposing),a=observedAction(policy,event),index=policy.indexOf(a),prob=r.prob*(a?.prob??.000001);evidence+=prob;
+  if(a&&ctx.responseModel){
+   for(const member of a.ensemble){
+    const weight=r.prob*.999*member[index]/a.ensemble.length,mass=Object.fromEntries(groups.map(g=>[g,0]));policy.forEach((p,i)=>mass[actionGroup(p)]+=member[i]);
+    for(const g of groups){gradient[g]+=weight*(Number(g===actionGroup(a))-mass[g]);fisher[g][0]+=r.prob/a.ensemble.length*mass[g]*(1-mass[g]);}
+    policy.forEach((p,i)=>{const g=actionGroup(p),factor=weight*(Number(i===index)-member[i]);p.features.forEach((x,j)=>{featureGradient[g][j]+=factor*x;});});
+    for(const g of groups)for(let j=0;j<RESPONSE_FEATURES.length;j++){let mean=0,square=0;policy.forEach((p,i)=>{if(actionGroup(p)===g){mean+=member[i]*p.features[j];square+=member[i]*p.features[j]**2;}});fisher[g][j+1]+=r.prob/a.ensemble.length*Math.max(0,square-mean*mean);}
+   }
   }
-  return {...r,prob};});
- for(const key of Object.keys(gradient))gradient[key]/=Math.max(1e-300,evidence);
- for(const key of Object.keys(featureGradient))featureGradient[key]=featureGradient[key].map(v=>v/Math.max(1e-300,evidence));
- return {rows:normalize(next),evidence,logLoss:-Math.log(Math.max(1e-300,evidence)),gradient,featureGradient};
+  return {...r,prob};
+ });
+ for(const g of groups){gradient[g]/=Math.max(1e-300,evidence);featureGradient[g]=featureGradient[g].map(v=>v/Math.max(1e-300,evidence));}
+ return {rows:normalize(next),evidence,logLoss:-Math.log(Math.max(1e-300,evidence)),gradient,featureGradient,fisher};
+}
+function conditionAction(rows,likelihood){return normalize(rows.map(r=>({...r,prob:r.prob*(likelihood[r.key]||0)})));}
+function restoreActionEvidence(value,h){
+ if(value==null)return {};
+ if(typeof value!=='object'||Array.isArray(value)||Object.keys(value).length>500)throw Error('Invalid action-policy evidence.');
+ const valid=new Set(ALL_COMBOS.map(r=>r.key)),out={};
+ for(const [index,e] of Object.entries(value)){
+  const event=h.events[Number(index)];if(!/^\d+$/.test(index)||event?.type!=='action'||e.actor!==event.actor||e.action!==event.action||e.to!==(event.to??null))throw Error('Action-policy evidence does not match the hand.');
+  if(!e.likelihood||typeof e.likelihood!=='object'||Array.isArray(e.likelihood)||Object.keys(e.likelihood).length>1326)throw Error('Invalid action likelihoods.');
+  const likelihood={};for(const [key,p] of Object.entries(e.likelihood)){if(!valid.has(key)||!Number.isFinite(p)||p<0||p>1)throw Error('Invalid hand action probability.');likelihood[key]=p;}
+  if(!Object.values(likelihood).some(p=>p>0))throw Error('Empty action likelihoods.');
+  out[index]={actor:e.actor,action:e.action,to:e.to,likelihood,source:'Recorded bot strategy'};
+ }
+ return out;
 }
 function comboMass(rows){const map=new Map();for(const r of rows){const old=map.get(r.key);if(old)old.prob+=r.prob;else map.set(r.key,{cards:r.cards,key:r.key,cls:r.cls||handClass(...r.cards),prob:r.prob});}return [...map.values()].sort((a,b)=>b.prob-a.prob);}
 function compactBelief(rows,count=40,seed=314){
@@ -1277,7 +1327,7 @@ function compactBelief(rows,count=40,seed=314){
 function beforeHand(a,b){if(a.id===b.id)return false;return a.live?.spec.sessionId&&a.live.spec.sessionId===b.live?.spec.sessionId?a.live.spec.handNumber<b.live.spec.handNumber:a.date<b.date||a.date===b.date&&a.id<b.id;}
 const empty=()=>({posterior:[...TYPE_PRIOR],hands:0,actions:0,logLoss:0,response:RESPONSE_PRIOR()});
 function record(map,key){if(!map[key])map[key]=empty();return map[key];}
-function finalize(rec,rows,count,loss,response){const mass=typeMass(rows);rec.posterior=mass.map((v,i)=>MEMORY_DECAY*v+(1-MEMORY_DECAY)*TYPE_PRIOR[i]);rec.hands++;rec.actions+=count;rec.logLoss+=loss;rec.response=response;}
+function finalize(rec,rows,count,loss,response){rec.posterior=[1,0,0,0];rec.hands++;rec.actions+=count;rec.logLoss+=loss;rec.response=response;}
 function summaries(filters,ctx,actor){const opponents=ctx.players.filter(p=>!p.folded&&p.name!==actor&&filters[p.name]);if(!opponents.length)return {};if(opponents.length===1)return beliefSummary(filters[opponents[0].name],ctx.board);const summaries=opponents.map(p=>beliefSummary(filters[p.name],ctx.board));return {strength:summaries.reduce((n,s)=>n+s.strength,0)/summaries.length,aggression:summaries.reduce((n,s)=>n+s.aggression,0)/summaries.length};}
 function processHand(h,limit,profiles,images,priors=null){
  const filters=Object.create(null),views=Object.create(null),counts=Object.create(null),losses=Object.create(null),responses=Object.create(null);
@@ -1286,7 +1336,7 @@ function processHand(h,limit,profiles,images,priors=null){
   if(p.name!==h.hero){const heroKey=playerKey(h,h.players.find(p=>p.name===h.hero)),imageKey=key+' → '+heroKey;views[p.name]={key:imageKey,rows:newBelief(images[imageKey]?.posterior||TYPE_PRIOR,priors?.[heroKey]),model:structuredClone(images[imageKey]?.response||RESPONSE_PRIOR()),count:0,loss:0};}
  }
  for(let i=0;i<limit;i++){
-  const event=h.events[i];
+  const event=h.actionEvidence?.[i]?{...h.events[i],rangeLikelihood:h.actionEvidence[i].likelihood}:h.events[i];
   if(event.type==='street'){
    for(const name of Object.keys(filters))filters[name]=conditionCards(filters[name],event.board);
    for(const view of Object.values(views))view.rows=conditionCards(view.rows,event.board);
@@ -1325,6 +1375,7 @@ function restoreMemory(value){
     if(!Number.isInteger(c.n)||c.n<0||!Number.isFinite(c.logLoss)||!c.theta||!c.counts)throw Error('Invalid response context.');
     for(const group of ['fold','check','call','bet'])if(!Number.isFinite(c.theta[group])||Math.abs(c.theta[group])>4||!Number.isFinite(c.counts[group])||c.counts[group]<0||c.recent&&(!Number.isFinite(c.recent[group])||c.recent[group]<0))throw Error('Invalid response weights.');
     if(c.weights!==undefined&&(!c.weights||typeof c.weights!=='object'||Object.keys(c.weights).some(k=>!['fold','check','call','bet'].includes(k))||['fold','check','call','bet'].some(k=>!Array.isArray(c.weights[k])||c.weights[k].length!==RESPONSE_FEATURES.length||c.weights[k].some(v=>!Number.isFinite(v)||Math.abs(v)>4))))throw Error('Invalid response feature weights.');
+    if(c.precision!==undefined&&(!c.precision||typeof c.precision!=='object'||['fold','check','call','bet'].some(g=>!Array.isArray(c.precision[g])||c.precision[g].length!==RESPONSE_FEATURES.length+1||c.precision[g].some(v=>!Number.isFinite(v)||v<4||v>10000))))throw Error('Invalid behavioral posterior precision.');
     if(c.weight!==undefined&&(!Number.isFinite(c.weight)||c.weight<0)||c.recentLoss!==undefined&&(!Number.isFinite(c.recentLoss)||c.recentLoss<0))throw Error('Invalid recent memory.');
    }
    out[kind][key]=structuredClone(r);
@@ -1354,7 +1405,7 @@ function nodeBeliefs(hands,h,step,priors={}){
 }
 function sampleHolding(rows,blocked,random){const valid=rows.filter(r=>r.cards.every(c=>!blocked.includes(c)));if(!valid.length)throw Error('No compatible sampled holding.');return drawWeighted(valid,random);}
 
-return {normalize,newBelief,conditionCards,typeMass,beliefSummary,updateBelief,comboMass,compactBelief,beforeHand,freshMemory,restoreMemory,completeMemory,learnMemory,learnMemoryAsync,nodeBeliefs,sampleHolding};
+return {normalize,newBelief,conditionCards,typeMass,beliefSummary,updateBelief,conditionAction,restoreActionEvidence,comboMass,compactBelief,beforeHand,freshMemory,restoreMemory,completeMemory,learnMemory,learnMemoryAsync,nodeBeliefs,sampleHolding};
 })();
 const __tree=(()=>{
 const {DECK,snapshot,evaluate}=__poker;
@@ -1457,10 +1508,166 @@ const analyzeTree=async ({hands,hand:h,step,priors={},config={},iterations=400,o
 
 return {treeAvailability,advanceState,terminalPayoff,analyzeTree};
 })();
+const __exactCfr=(()=>{
+const {DECK,evaluate}=__poker;
+const {publicContext,legalActions,actionPolicy,seeded}=__policy;
+const {conditionCards,comboMass,beliefSummary}=__learning;
+const {advanceState}=__tree;
+const copy=s=>({...s,board:[...s.board],players:s.players.map(p=>({...p})),acted:{...s.acted},pending:[...s.pending]});
+const exactHandKey=cards=>cards.slice().sort().join('');
+const exactInfoKey=(actor,cards,board,history)=>actor+'|'+exactHandKey(cards)+'|'+board.join(',')+'|'+history;
+const sum=x=>x.reduce((s,v)=>s+v,0);
+function normalized(x,fallback){const z=sum(x);return z>0?x.map(v=>v/z):[...fallback];}
+function distribution(rows){const cumulative=[];let total=0;rows.forEach(r=>{total+=r.prob;cumulative.push(total);});return {rows,cumulative,total};}
+function pickDistribution(d,random){const x=random()*d.total;let lo=0,hi=d.rows.length-1;while(lo<hi){const m=(lo+hi)>>1;if(d.cumulative[m]<x)lo=m+1;else hi=m;}return d.rows[lo];}
+function sampler(rows){const d=distribution(rows);return random=>pickDistribution(d,random);}
+function exactMenu(ctx,wagers=0,root=false){
+ let actions=legalActions(ctx);if(root)return actions;
+ const limit=ctx.board.length?1:2;if(wagers>=limit)return actions.filter(a=>a.kind!=='bet');
+ const bets=actions.filter(a=>a.kind==='bet'),p=ctx.players.find(p=>p.name===ctx.actor),call=Math.min(p.stack,Math.max(0,ctx.level-p.streetContribution));
+ const targets=ctx.board.length?[p.streetContribution+call+.5*(ctx.pot+call),p.streetContribution+call+(ctx.pot+call)]:[3*ctx.level];
+ const keep=new Set(targets.map(to=>[...bets].sort((a,b)=>Math.abs(a.to-to)-Math.abs(b.to-to))[0]?.id));if(bets.length){keep.add(bets[0].id);keep.add(bets.at(-1).id);}return actions.filter(a=>a.kind!=='bet'||keep.has(a.id));
+}
+function buildExactGame(input){
+ const h=input.hand,ctx=publicContext(h,input.step,h.hero);if(ctx.players.length!==2||ctx.players.some(p=>p.folded)||!ctx.actor)throw Error('Hand-specific CFR requires an active heads-up decision.');
+ const names=[h.hero,ctx.players.find(p=>p.name!==h.hero).name],rows=names.map(n=>comboMass(conditionCards(input.beliefState.filters[n],ctx.board)));
+ const own=h.players.find(p=>p.name===h.hero).cards;if(own.length!==2||new Set(own).size!==2||own.some(c=>ctx.board.includes(c)))throw Error('Enter two distinct legal Hero cards.');
+ // Joint chance is proportional to the product of public ranges, excluding
+ // overlapping cards. Sampling/training never conditions on the queried hand.
+ const cardMass=rows[1].reduce((m,r)=>{r.cards.forEach(c=>m[c]=(m[c]||0)+r.prob);return m;},{}),byKey=new Map(rows[1].map(r=>[exactHandKey(r.cards),r.prob]));
+ const compatible=rows[0].map(r=>Math.max(0,1-(cardMass[r.cards[0]]||0)-(cardMass[r.cards[1]]||0)+(byKey.get(exactHandKey(r.cards))||0)));
+ const total=rows[0].reduce((s,r,i)=>s+r.prob*compatible[i],0);if(total<=1e-12)throw Error('The two ranges have no compatible joint deals.');
+ const marginals=rows[0].map((r,i)=>r.prob*compatible[i]/total);
+ const eligible=rows[0].map((_,i)=>i).filter(i=>compatible[i]>1e-12),shuffle=seeded(937);for(let i=eligible.length-1;i>0;i--){const j=Math.floor(shuffle()*(i+1));[eligible[i],eligible[j]]=[eligible[j],eligible[i]];}
+ return {exact:true,ctx,names,rows,compatible,total,marginals,own:[...own],ownKey:exactHandKey(own),bb:h.bb,config:input.config||{},models:input.beliefState.responses||{},nodes:new Map(),iterations:0,regretUpdates:0,averageUpdates:0,transientVisits:0,maxNodes:input.maxNodes||60000,draws:rows.map(distribution),startStacks:names.map(n=>ctx.players.find(p=>p.name===n).stack),randomState:190531,fallbacks:0,lookups:0,summaryCache:new Map(),menuCache:new Map(),summaryRows:rows.map(rs=>{const step=Math.max(1,Math.floor(rs.length/32));return rs.filter((_,i)=>i%step===0);}),eligible};
+}
+function baseline(game,ctx,cards,actions){
+ if(actions.length===1)return [1];
+ const other=1-game.names.indexOf(ctx.actor),cache=other+'|'+ctx.board.join(',');let summary=game.summaryCache.get(cache);
+ if(!summary){summary=beliefSummary(game.summaryRows[other],ctx.board);if(game.summaryCache.size>=2000)game.summaryCache.delete(game.summaryCache.keys().next().value);game.summaryCache.set(cache,summary);}
+ return actionPolicy({...ctx,actions,responseModel:game.models[ctx.actor]},cards,0,summary).map(a=>a.prob);
+}
+function cachedMenu(game,ctx,wagers,root){
+ // Card identities do not affect legal amounts. This cache shares only menus,
+ // never beliefs, regrets, policies or information-set identities.
+ const key=[Number(root),wagers,ctx.actor,ctx.board.length,ctx.pot,ctx.level,ctx.minRaise,ctx.raises,...ctx.players.flatMap(p=>[p.stack,p.streetContribution,Number(p.folded),ctx.acted[p.name]?.level??-1,ctx.acted[p.name]?.minRaise??-1,Number(ctx.acted[p.name]?.checked)])].join('|');
+ let actions=game.menuCache.get(key);if(!actions){actions=exactMenu(ctx,wagers,root);if(game.menuCache.size>=4000)game.menuCache.delete(game.menuCache.keys().next().value);game.menuCache.set(key,actions);}return actions;
+}
+function info(game,ctx,cards,history,wagers,root,create){
+ const actor=game.names.indexOf(ctx.actor),key=exactInfoKey(actor,cards,ctx.board,history);let node=game.nodes.get(key);
+ if(!node){const actions=cachedMenu(game,ctx,wagers,root),base=baseline(game,ctx,cards,actions);node={key,actor,actions,base,regret:actions.map(()=>0),sum:actions.map(()=>0),updates:0,averageVisits:0};if(create&&game.nodes.size<game.maxNodes)game.nodes.set(key,node);else if(create)game.transientVisits++;}
+ return node;
+}
+// Sparse exact states are unstable after only one or two sampled outcomes.
+// Keep the raw CFR accumulators; the played/evaluated policy explicitly shrinks
+// their average toward the learned baseline by 16 pseudo-visits.
+function strategy(node,average=false){const policy=normalized(average?node.sum:node.regret.map(v=>Math.max(0,v)),node.base);if(!average)return policy;const trained=node.averageVisits/(node.averageVisits+16);return policy.map((p,i)=>trained*p+(1-trained)*node.base[i]);}
+function drawDeal(game,random){
+ // Randomly shuffled cycles over first-player hands give each combination
+ // training opportunities; importance weights recover the public joint prior.
+ const eligible=game.eligible,i=eligible[game.iterations%eligible.length],a=game.rows[0][i];let b;
+ for(let n=0;n<100000;n++){b=pickDistribution(game.draws[1],random);if(!a.cards.some(c=>b.cards.includes(c)))break;b=null;}if(!b)throw Error('Could not sample a compatible deal.');
+ return {hands:[a.cards,b.cards],weight:eligible.length*game.marginals[i]};
+}
+function nextBoard(ctx,hands,random){
+ const deck=DECK.filter(c=>!ctx.board.includes(c)&&!hands.some(h=>h.includes(c))),s=copy(ctx),count=s.board.length?1:3;
+ for(let i=0;i<count;i++){const j=i+Math.floor(random()*(deck.length-i));[deck[i],deck[j]]=[deck[j],deck[i]];s.board.push(deck[i]);}
+ s.street=({3:'Flop',4:'Turn',5:'River'})[s.board.length];s.level=0;s.minRaise=s.bb;s.raises=0;s.acted={};s.players.forEach(p=>p.streetContribution=0);s.pending=s.players.filter(p=>!p.folded&&p.stack>0).map(p=>p.name);
+ s.actor=s.pending.length<2?null:[...s.players].sort((a,b)=>Number(a.seat<=s.button)-Number(b.seat<=s.button)||a.seat-b.seat).find(p=>s.pending.includes(p.name)).name;return s;
+}
+function terminal(game,ctx,hands){
+ const alive=ctx.players.filter(p=>!p.folded),scores=alive.length===1?[{name:alive[0].name,value:0}]:alive.map(p=>({name:p.name,value:evaluate([...hands[game.names.indexOf(p.name)],...ctx.board]).score})),best=Math.max(...scores.map(s=>s.value)),winners=scores.filter(s=>s.value===best).map(s=>s.name);
+ const cfg=game.config,fees=ctx.board.length?Math.min(ctx.pot,Math.min(Math.round(ctx.pot*(cfg.rakePct??5)/100),Math.round((cfg.rakeCap??1)*100))+Math.round((cfg.extraFee??0)*100)):0,net=ctx.pot-fees;
+ const order=[...ctx.players].sort((a,b)=>Number(a.seat<=ctx.button)-Number(b.seat<=ctx.button)||a.seat-b.seat).filter(p=>winners.includes(p.name)).map(p=>p.name);
+ const awards=game.names.map(n=>{const i=order.indexOf(n);return i<0?0:Math.floor(net/order.length)+Number(i<net%order.length);}),investments=game.names.map((n,i)=>game.startStacks[i]-ctx.players.find(p=>p.name===n).stack);
+ return {values:awards.map((a,i)=>(a-investments[i])/game.bb),award:awards[0]/100,investment:investments[0]/100,payoff:(awards[0]-investments[0])/100,outcome:alive.length===1?(winners.includes(game.names[0])?'Opponent folds':'Hero folds'):winners.includes(game.names[0])?winners.length>1?'Split showdown':'Hero wins showdown':'Hero loses showdown'};
+}
+function descend(game,ctx,hands,history,wagers,root,updating,random,weight){
+ if(!ctx.actor){if(ctx.players.filter(p=>!p.folded).length===1||ctx.board.length===5)return terminal(game,ctx,hands).values[updating];const next=nextBoard(ctx,hands,random);return descend(game,next,hands,history+'/B'+next.board.join(','),0,false,updating,random,weight);}
+ const actor=game.names.indexOf(ctx.actor),node=info(game,ctx,hands[actor],history,wagers,root,true),policy=strategy(node);
+ function child(i){const next=copy(ctx),a=node.actions[i];advanceState(next,a);return descend(game,next,hands,history+'/'+actor+':'+a.id,wagers+Number(a.kind==='bet'),false,updating,random,weight);}
+ if(actor!==updating){node.averageVisits++;game.averageUpdates++;policy.forEach((p,i)=>node.sum[i]+=weight*p);return child(sampleIndex(policy,random));}
+ const values=node.actions.map((_,i)=>child(i)),v=values.reduce((s,x,i)=>s+x*policy[i],0);values.forEach((x,i)=>node.regret[i]+=weight*(x-v));node.updates++;game.regretUpdates++;return v;
+}
+function sampleIndex(prob,random){let x=random()*sum(prob);for(let i=0;i<prob.length;i++){x-=prob[i];if(x<=0)return i;}return prob.length-1;}
+function trainExact(game,iterations=1){const random=()=>{game.randomState=(Math.imul(game.randomState,1664525)+1013904223)>>>0;return game.randomState/4294967296;};for(let t=0;t<iterations;t++){for(let player=0;player<2;player++){const deal=drawDeal(game,random);descend(game,copy(game.ctx),deal.hands,'',0,true,player,random,deal.weight);}game.iterations++;}return game;}
+function exactPolicyFor(plan,cards){const n=info(plan.game,plan.ctx,cards,plan.history,plan.wagers,plan.root,false);let probabilities=strategy(n,true);const adjustment=plan.adjustment;if(adjustment?.history===plan.history&&adjustment.actor===plan.ctx.actor)probabilities=probabilities.map((p,i)=>(1-adjustment.mix)*p+Number(n.actions[i].id===adjustment.targetId)*adjustment.mix);return {policy:n.actions.map((a,i)=>({...a,prob:probabilities[i]})),updates:n.updates,averageVisits:n.averageVisits};}
+function exactActionLikelihood(plan,action){
+ if(!plan?.game.exact||!plan.ctx.actor)return null;
+ const index=plan.game.names.indexOf(plan.ctx.actor),rows=conditionCards((plan.ranges||plan.game.rows)[index],plan.ctx.board);
+ return Object.fromEntries(rows.map(r=>{const policy=exactPolicyFor(plan,r.cards).policy,a=policy.find(a=>a.kind===action.kind&&(a.kind!=='bet'||a.to===action.to));return [r.key,a?.prob||0];}));
+}
+function advanceExactPlan(plan,event){
+ if(!plan)return null;let ctx=copy(plan.ctx),history=plan.history,wagers=plan.wagers,ranges=plan.ranges||plan.game.rows;
+ if(event.type==='action'){
+  if(ctx.actor!==event.actor)return null;const kind=({folds:'fold',checks:'check',calls:'call',bets:'bet',raises:'bet'})[event.action]||event.kind;
+  const a=exactMenu(ctx,wagers,plan.root).find(a=>a.kind===kind&&(kind!=='bet'||a.to===(event.to??ctx.players.find(p=>p.name===ctx.actor).streetContribution+event.amount)));if(!a)return null;
+  const actor=plan.game.names.indexOf(ctx.actor),likelihood=exactActionLikelihood(plan,a),weighted=ranges[actor].map(r=>({...r,prob:r.prob*(likelihood[r.key]||0)})),total=sum(weighted.map(r=>r.prob));if(total<=0)return null;ranges=ranges.map((rs,i)=>i===actor?weighted.filter(r=>r.prob>0).map(r=>({...r,prob:r.prob/total})):rs);advanceState(ctx,a);history+='/'+actor+':'+a.id;wagers+=Number(a.kind==='bet');
+ }else if(event.type==='street'){
+  if(ctx.actor||event.board.length!==(ctx.board.length?ctx.board.length+1:3)||!ctx.board.every((c,i)=>c===event.board[i]))return null;
+  try{ranges=ranges.map(rs=>conditionCards(rs,event.board));}catch{return null;}ctx.board=[...event.board];ctx.street=event.street;ctx.level=0;ctx.minRaise=ctx.bb;ctx.raises=0;ctx.acted={};ctx.players.forEach(p=>p.streetContribution=0);ctx.pending=ctx.players.filter(p=>!p.folded&&p.stack>0).map(p=>p.name);ctx.actor=ctx.pending.length<2?null:[...ctx.players].sort((a,b)=>Number(a.seat<=ctx.button)-Number(b.seat<=ctx.button)||a.seat-b.seat).find(p=>ctx.pending.includes(p.name)).name;history+='/B'+ctx.board.join(',');wagers=0;
+ }else return plan;
+ return {...plan,ctx,history,wagers,ranges,adjustment:undefined,root:false};
+}
+function exactPlanDecision(plan){
+ if(!plan?.game.exact||plan.ctx.actor!==plan.game.names[0])return null;
+ const own=exactPolicyFor(plan,plan.game.own);if(own.averageVisits<4)return null;
+ return {engine:'exact-hand-cfr',policy:own.policy,iterations:plan.game.iterations,informationSets:plan.game.nodes.size,rootUpdates:own.updates,averageVisits:own.averageVisits,trainedPolicyWeight:own.averageVisits/(own.averageVisits+16),reused:!plan.root,scope:EXACT_SCOPE};
+}
+const EXACT_SCOPE='Hand-specific external-sampling CFR: exact two-card information sets and exact revealed boards, sampled compatible private deals and chance cards, restricted future bet sizes and raise counts. Played policies shrink the average strategy toward the continuous baseline by 16 pseudo-visits; unvisited information sets use that baseline. Finite sampling and sparse coverage remain limitations; no full-game Nash or exploitability guarantee.';
+const solveExactCfr=async (input,{iterations=4000,onProgress=()=>{},cancel=()=>false,maxNodes=60000}={})=>{
+ if(cancel())return null;const game=buildExactGame({...input,maxNodes});for(const r of game.rows[0])info(game,game.ctx,r.cards,'',0,true,true);let last=performance.now(),lastProgress=0;
+ for(let i=0;i<iterations;i++){if(cancel())return null;trainExact(game,1);if(performance.now()-last>=40||i+1===iterations){if(performance.now()-lastProgress>=160||i+1===iterations){onProgress('Exact-hand CFR · '+(i+1)+' / '+iterations+' iterations · '+game.nodes.size.toLocaleString()+' information sets');lastProgress=performance.now();}await new Promise(r=>setTimeout(r,0));last=performance.now();}}
+ if(cancel())return null;const plan={game,ctx:copy(game.ctx),history:'',wagers:0,root:true,ranges:game.rows},own=exactPolicyFor(plan,game.own);
+ return {engine:'exact-hand-cfr',policy:own.policy,iterations:game.iterations,informationSets:game.nodes.size,rootUpdates:own.updates,averageVisits:own.averageVisits,trainedPolicyWeight:own.averageVisits/(own.averageVisits+16),memoryLimited:game.transientVisits>0,transientVisits:game.transientVisits,scope:EXACT_SCOPE,plan};
+};
+function rollout(plan,hands,first,random,stats){
+ const game=plan.game,path=[];let ctx=copy(plan.ctx),history=plan.history,wagers=plan.wagers,root=plan.root,action=first,initial=true;
+ for(let n=0;n<120;n++){
+  if(!ctx.actor){if(ctx.board.length===5||ctx.players.filter(p=>!p.folded).length===1)return {...terminal(game,ctx,hands),path};ctx=nextBoard(ctx,hands,random);if(path.length<3)path.push('Board · '+ctx.board.join(' '));history+='/B'+ctx.board.join(',');wagers=0;root=false;continue;}
+  const actor=game.names.indexOf(ctx.actor);if(!action){const node=info(game,ctx,hands[actor],history,wagers,root,false);stats.lookups++;if(!node.averageVisits)stats.fallbacks++;const policy=strategy(node,true);action=node.actions[sampleIndex(policy,random)];}
+  if(!initial&&path.length<3)path.push(ctx.street+' · '+ctx.actor+' '+action.label);initial=false;advanceState(ctx,action);history+='/'+actor+':'+action.id;wagers+=Number(action.kind==='bet');root=false;action=null;
+ }
+ throw Error('Exact-hand rollout exceeded legal action bound.');
+}
+const inspectExact=async (solved,input,{samples=1000,onProgress=()=>{},cancel=()=>false}={})=>{
+ const {plan,...diagnostics}=solved,game=plan.game,h=input.hand,own=h.players.find(p=>p.name===h.hero).cards,opponents=comboMass(conditionCards(input.beliefState.filters[game.names[1]],[...plan.ctx.board,...own])),pick=sampler(opponents),stats={lookups:0,fallbacks:0},allActions=[];
+ for(const action of solved.policy){const random=seeded(81821),routes=new Map(),tree={n:0,value:0,children:new Map()};let value=0,sq=0;
+  for(let i=0;i<samples;i++){if(cancel())return null;const result=rollout(plan,[own,pick(random).cards],action,random,stats),zero=Math.abs(result.investment)<1e-9,name=result.outcome+(zero?' · 0 BB further':' · paid continuation'),r=routes.get(name)||{name,p:0,award:0,investment:0,contribution:0,zeroInvestment:zero};r.p++;r.award+=result.award;r.investment+=result.investment;r.contribution+=result.payoff;routes.set(name,r);let branch=tree;branch.n++;branch.value+=result.payoff;for(const label of result.path){if(!branch.children.has(label))branch.children.set(label,{label,n:0,value:0,children:new Map()});branch=branch.children.get(label);branch.n++;branch.value+=result.payoff;}value+=result.payoff;sq+=result.payoff**2;if(i%200===199){onProgress('Evaluating '+action.label+' · '+(i+1)+' / '+samples);await new Promise(r=>setTimeout(r,0));}}
+  const map=exactActionLikelihood(plan,action),reach=game.rows[0].reduce((s,r,i)=>s+game.marginals[i]*(map[r.key]||0),0),heroActionRange=reach>0?game.rows[0].map((r,i)=>({cards:r.cards,probability:game.marginals[i]*(map[r.key]||0)/reach})).filter(r=>r.probability>0).sort((a,b)=>b.probability-a.probability):[];
+  const outcomeRows=[...routes.values()].map(r=>({...r,p:r.p/samples,award:r.award/r.p,investment:r.investment/r.p,payoff:r.contribution/r.p,contribution:r.contribution/samples}));
+  const exportBranch=(b,parent)=>({label:b.label||action.label,probability:b.n/samples,conditionalProbability:b.n/parent,ev:b.value/b.n,children:[...b.children.values()].sort((a,b)=>b.n-a.n).map(c=>exportBranch(c,b.n))});
+  allActions.push({...action,tree:exportBranch(tree,samples),policy:action.prob,reach,heroActionRange,ev:value/samples,se:Math.sqrt(Math.max(0,(sq-value*value/samples)/(samples-1))/samples),routes:outcomeRows,immediateInvestment:action.cost/100,expectedInvestment:outcomeRows.reduce((s,r)=>s+r.p*r.investment,0),zeroInvestmentProbability:outcomeRows.filter(r=>r.zeroInvestment).reduce((s,r)=>s+r.p,0)});
+ }
+ const sorted=[...allActions].sort((a,b)=>b.ev-a.ev),rootCoverage=game.rows[0].reduce((s,r,i)=>s+(exactPolicyFor(plan,r.cards).averageVisits?game.marginals[i]:0),0);
+ return {model:'exact-hand-cfr',...diagnostics,board:[...plan.ctx.board],cards:[...own],conditioning:input.conditioning,samples,allActions,actions:sorted.slice(0,5).map((a,i)=>({...a,rank:i+1,gap:sorted[0].ev-a.ev})),tested:allActions.length,rootCoverage,fallbackRate:stats.lookups?stats.fallbacks/stats.lookups:0,opponentRange:opponents};
+};
+
+function exactResponseAfter(plan,action){
+ const ctx=copy(plan.ctx);advanceState(ctx,action);if(!ctx.actor)return null;
+ return {...plan,ctx,history:plan.history+'/'+plan.game.names.indexOf(plan.ctx.actor)+':'+action.id,wagers:plan.wagers+Number(action.kind==='bet'),root:false,adjustment:undefined};
+}
+function exactPolicyRows(plan){return (plan.ranges||plan.game.rows)[plan.game.names.indexOf(plan.ctx.actor)].map(r=>({...r,policy:exactPolicyFor(plan,r.cards).policy}));}
+const priceExactProbe=async (plan,target,{samples=160,cancel=()=>false,onProgress=()=>{}}={})=>{
+ const rows=plan.ranges||plan.game.rows,opponentCards=rows[1].reduce((m,r)=>{r.cards.forEach(c=>m[c]=(m[c]||0)+r.prob);return m;},{}),same=new Map(rows[1].map(r=>[exactHandKey(r.cards),r.prob]));
+ const first=rows[0].map(r=>({...r,prob:r.prob*Math.max(0,1-(opponentCards[r.cards[0]]||0)-(opponentCards[r.cards[1]]||0)+(same.get(exactHandKey(r.cards))||0))})),pickFirst=sampler(first),pickSecond=sampler(rows[1]),random=seeded(65813),stats={lookups:0,fallbacks:0};let loss=0,square=0;
+ for(let n=0;n<samples;n++){
+  if(cancel())return null;const hero=pickFirst(random);let opponent;do{opponent=pickSecond(random);}while(hero.cards.some(c=>opponent.cards.includes(c)));
+  const policy=exactPolicyFor(plan,hero.cards).policy,base=policy[sampleIndex(policy.map(a=>a.prob),random)],seed=Math.floor(random()*4294967296),hands=[hero.cards,opponent.cards];
+  const before=rollout(plan,hands,base,seeded(seed),stats).values[0],after=rollout(plan,hands,target,seeded(seed),stats).values[0],difference=before-after;loss+=difference;square+=difference*difference;
+  if(n%40===39){onProgress('Pricing exploration · '+(n+1)+' / '+samples+' paired continuations');await new Promise(r=>setTimeout(r,0));}
+ }
+ const mean=loss/samples,se=Math.sqrt(Math.max(0,(square-loss*loss/samples)/(samples-1))/samples);
+ return {mean,se,upper:Math.max(0,mean+2*se),samples,fallbackRate:stats.lookups?stats.fallbacks/stats.lookups:0};
+};
+
+return {exactHandKey,exactInfoKey,exactMenu,buildExactGame,trainExact,exactPolicyFor,exactActionLikelihood,advanceExactPlan,exactPlanDecision,EXACT_SCOPE,solveExactCfr,inspectExact,exactResponseAfter,exactPolicyRows,priceExactProbe};
+})();
 const __riverCfr=(()=>{
+const {solveExactCfr,inspectExact,advanceExactPlan,exactPlanDecision,exactActionLikelihood}=__exactCfr;
 const {evaluate,DECK}=__poker;
-const {publicContext,legalActions,drawWeighted,seeded,handSignal}=__policy;
-const {comboMass,conditionCards,nodeBeliefs}=__learning;
+const {publicContext,legalActions,drawWeighted,seeded,handSignal,observedAction}=__policy;
+const {comboMass,conditionCards,nodeBeliefs,conditionAction}=__learning;
 const {advanceState}=__tree;
 const B=6,S=B*B;
 const clone=s=>({...s,board:[...s.board],players:s.players.map(p=>({...p})),acted:structuredClone(s.acted),pending:[...s.pending]});
@@ -1576,7 +1783,7 @@ function buildRiverGame(input,{samples=4096,runouts=32,inspect=false}={}){
   node.children=actions.map(a=>{const next=clone(s),phase=advanceState(next,a);if(phase==='board'&&!coupled)throw Error('Unexpected future river board.');return build(next,wagers+Number(a.kind==='bet'),false,outcome);});return node;
  }
  const root=build(ctx,0,true),own=h.players.find(p=>p.name===h.hero).cards;
- return {root,mass,marginals,names,...(inspect?{rangeRows:types.map(t=>t.rows)}:{}),preflop,flopGroups:preflop?preflopGroups.size:0,preflopWagers:preflop?2:0,startBoard:[...ctx.board],flopBoard:flop?[...ctx.board]:null,turnBoard:turn?[...ctx.board]:null,street:ctx.street,runouts:preflop||flop?runouts:0,turnGroups:preflop?2:flop?flopGroups.size:0,riverGroups:preflop?2:flop?Math.max(...[...flopGroups.values()].map(g=>g.children.size)):groupNames.length,maxWagers:coupled?1:2,iterations:0,samples:accepted,nodeCount,ownType:types[0].type(own),bb:unit,config:{...config}};
+ return {root,mass,marginals,names,handBuckets:types.map(t=>Object.fromEntries(t.rows.map(r=>[r.key,r.type]))),...(inspect?{rangeRows:types.map(t=>t.rows)}:{}),preflop,flopGroups:preflop?preflopGroups.size:0,preflopWagers:preflop?2:0,startBoard:[...ctx.board],flopBoard:flop?[...ctx.board]:null,turnBoard:turn?[...ctx.board]:null,street:ctx.street,runouts:preflop||flop?runouts:0,turnGroups:preflop?2:flop?flopGroups.size:0,riverGroups:preflop?2:flop?Math.max(...[...flopGroups.values()].map(g=>g.children.size)):groupNames.length,maxWagers:coupled?1:2,iterations:0,samples:accepted,nodeCount,ownType:types[0].type(own),bb:unit,config:{...config}};
 }
 function strategy(node,average){return (average?node.sum:node.regret).map(row=>normalized(average?row:row.map(v=>Math.max(0,v))));}
 // Compile chance-weighted terminal matrices once. During training, messages
@@ -1642,7 +1849,7 @@ function measureRiver(game){
  const improvements=best.map((v,p)=>Math.max(0,v-value[p])),policy=strategy(game.root,true)[game.ownType];
  return {preflop:!!game.preflop,flopGroups:game.flopGroups||0,preflopWagers:game.preflopWagers||0,street:game.street||'River',runouts:game.runouts||0,turnGroups:game.turnGroups||0,riverGroups:game.riverGroups||0,maxWagers:game.maxWagers||2,iterations:game.iterations,samples:game.samples,buckets:B,nodeCount:game.nodeCount,ownBucket:game.ownType+1,value,improvements,nashConv:improvements[0]+improvements[1],policy:game.root.actions.map((a,i)=>({...a,prob:policy[i]})),scope:game.preflop?'Joint preflop-to-river CFR; six unequal preflop strength buckets retained through showdown; sampled five-card runouts; four flop texture groups and two groups on each later street; up to two new preflop wagers and one per later street; later sizes approximately 3x preflop or 75% pot postflop plus maximum; no-flop-no-drop rake; gap only for sampled abstraction; no full-game Nash guarantee.':game.flopBoard?'Joint flop-to-river CFR; fixed heuristic flop buckets; sampled compatible pairs and ordered runouts; four public texture classes per future street; one new wager per street; restricted future sizes; gap exact only in sampled abstraction; rake included; no Nash guarantee.':game.turnBoard?'Joint turn-to-river CFR; fixed turn hand buckets retain type across streets; all legal river cards integrated into public texture groups; one new wager per street; restricted future sizes; sampled ranges; gap exact only in abstraction; rake included; no Nash guarantee.':'Heads-up river; six strength buckets; sampled joint ranges; at most two new wagers; restricted future sizes; gap exact only within this abstraction; rake included; no general Nash convergence guarantee.'};
 }
-const solveRiverCfr=async (input,{iterations=2000,samples=4096,runouts=32,inspect=false,onProgress=()=>{},cancel=()=>false}={})=>{
+const solveBucketCfr=async (input,{iterations=2000,samples=4096,runouts=32,inspect=false,onProgress=()=>{},cancel=()=>false}={})=>{
  if(cancel())return null;
  const game=buildRiverGame(input,{samples,runouts,inspect});
  let lastYield=performance.now();
@@ -1653,7 +1860,10 @@ const solveRiverCfr=async (input,{iterations=2000,samples=4096,runouts=32,inspec
  if(game.marginals[0][game.ownType]===0)return {...result,unsupported:true};return {...result,plan:{game,node:game.root,mass:game.mass,steps:0}};
 };
 
+const solveRiverCfr=solveExactCfr;
+
 function advanceCfrPlan(plan,event){
+ if(plan?.game.exact)return advanceExactPlan(plan,event);
  if(!plan)return null;const node=plan.node;let index,weights;
  if(event.type==='action'){
   if(node.values||node.chance||plan.game.names[node.actor]!==event.actor)return null;
@@ -1668,6 +1878,7 @@ function advanceCfrPlan(plan,event){
  return {...plan,node:node.children[index],mass:weights.map(p=>p/total),steps:plan.steps+1};
 }
 function cfrPlanDecision(plan){
+ if(plan?.game.exact)return exactPlanDecision(plan);
  if(!plan||plan.node.values||plan.node.chance||plan.node.actor!==0)return null;
  const mass=plan.mass,marginals=[Array(B).fill(0),Array(B).fill(0)];mass.forEach((p,k)=>{marginals[0][Math.floor(k/B)]+=p;marginals[1][k%B]+=p;});
  if(marginals[0][plan.game.ownType]<1e-12)return null;
@@ -1695,48 +1906,83 @@ function withCfrPolicy(plan,policy){
 
 // Same starting budgets as a fresh practice-bot solve. Analysis is a new solve,
 // not a reconstruction of a previously retained or exploration-adjusted plan.
-function cfrBudget(boardLength){return boardLength===0?{iterations:400,samples:2048,runouts:32}:boardLength===3?{iterations:600,samples:1024,runouts:32}:boardLength===4?{iterations:600,samples:2048}:{iterations:2000,samples:4096};}
+function cfrBudget(boardLength){return {iterations:boardLength===0?600:boardLength===3?1200:boardLength===4?2400:4000};}
+
+function cfrActionLikelihood(plan,action){
+ if(plan?.game.exact)return exactActionLikelihood(plan,action);
+ if(!plan||plan.node.chance||plan.node.values)return null;
+ const index=plan.node.actions.findIndex(a=>a.kind===action.kind&&(a.kind!=='bet'||a.to===action.to));if(index<0)return null;
+ const policy=strategy(plan.node,true),mapping=plan.game.handBuckets?.[plan.node.actor];if(!mapping)return null;
+ return Object.fromEntries(Object.entries(mapping).map(([key,b])=>[key,policy[b][index]]));
+}
+
+// Replace the last wager's heuristic likelihood, never multiply both updates.
+// Recorded practice evidence uses the actual policy; otherwise this is explicitly
+// a modeled CFR reconstruction, not knowledge of a human opponent's strategy.
+const wagerConditionedBeliefs=async input=>{
+ const {hand:h,step,beliefState:current,onProgress=()=>{},cancel=()=>false}=input,ctx=publicContext(h,step,h.hero),hero=ctx.players.find(p=>p.name===h.hero);
+ if(cancel())return null;
+ if(ctx.level<=hero.streetContribution)return {beliefs:current,conditioning:{source:'Observed-action model',note:'No outstanding wager.'}};
+ let index=-1;for(let i=step-1;i>=0;i--){const e=h.events[i];if(e.type==='street')break;if(e.type==='action'){if(e.actor!==h.hero&&['bets','raises'].includes(e.action))index=i;break;}}
+ if(index<0)return {beliefs:current,conditioning:{source:'Observed-action model',note:'No immediately preceding opponent wager to reconstruct.'}};
+ const event=h.events[index],saved=h.actionEvidence?.[index];
+ if(saved)return {beliefs:current,conditioning:{source:'Recorded bot strategy',eventIndex:index,actor:event.actor,note:'Range already conditioned once on the recorded action likelihoods.'}};
+ const prior=input.wagerPrior?.eventIndex===index?input.wagerPrior.beliefs:nodeBeliefs(input.hands||[],h,index,input.priors||{}),before=publicContext(h,index,event.actor);
+ const candidates=comboMass(conditionCards(prior.filters[event.actor],before.board)),dummy=candidates[0]?.cards;if(!dummy)throw Error('No compatible range before the opponent wager.');
+ const publicHand={...h,hero:event.actor,players:h.players.map(p=>({...p,cards:p.name===event.actor?[...dummy]:[]}))};
+ onProgress('Reconstructing opponent wager likelihoods with CFR…');
+ const solved=await solveRiverCfr({...input,hand:publicHand,step:index,beliefState:prior},{...cfrBudget(before.board.length),...input.solveOptions,onProgress:message=>onProgress('Opponent model · '+message),cancel});
+ if(!solved||cancel())return null;if(!solved.plan)throw Error('Opponent CFR range reconstruction has no sampled support.');
+ const matched=observedAction(solved.policy,event),likelihood=cfrActionLikelihood(solved.plan,matched);if(!likelihood)throw Error('Cannot map the observed wager to the opponent strategy.');
+ const posterior=conditionCards(conditionAction(prior.filters[event.actor],likelihood),ctx.board),beliefs={...current,filters:{...current.filters,[event.actor]:posterior},ranges:{...current.ranges,[event.actor]:conditionCards(posterior,[...ctx.board,...h.players.find(p=>p.name===h.hero).cards])}};
+ return {beliefs,conditioning:{source:'Inferred CFR wager model',eventIndex:index,actor:event.actor,modeledAction:matched.label,mappedSize:matched.to!==(event.to??before.players.find(p=>p.name===event.actor).streetContribution+event.amount),note:'Replaces the last wager’s heuristic update. Earlier history still uses observational beliefs. This is an assumed opponent strategy, not a recorded decision.'}};
+};
+
+function isAllInResponse(input){
+ const ctx=publicContext(input.hand,input.step,input.hand.hero),actions=legalActions(ctx),call=actions.find(a=>a.kind==='call');
+ return ctx.players.length===2&&!!call&&!actions.some(a=>a.kind==='bet')&&(ctx.players.find(p=>p.name===input.hand.hero).stack<=call.cost||ctx.players.find(p=>p.name!==input.hand.hero).stack===0);
+}
+const analyzeAllIn=async input=>{
+ const {hand:h,step,beliefState,onProgress=()=>{},cancel=()=>false}=input,ctx=publicContext(h,step,h.hero),actions=legalActions(ctx),call=actions.find(a=>a.kind==='call');
+ if(ctx.players.length!==2||!call||actions.some(a=>a.kind==='bet'))return null;
+ const hero=ctx.players.find(p=>p.name===h.hero),opponent=ctx.players.find(p=>p.name!==h.hero);
+ // A closed raise right alone does not end future betting.
+ if(hero.stack>call.cost&&opponent.stack>0)return null;
+ const cards=h.players.find(p=>p.name===h.hero).cards,rows=comboMass(conditionCards(beliefState.filters[opponent.name],[...ctx.board,...cards]));
+ const s=clone(ctx);advanceState(s,call);
+ const pot=s.pot,fee=Math.min(pot,Math.min(Math.round(pot*(input.config?.rakePct??5)/100),Math.round((input.config?.rakeCap??1)*100))+Math.round((input.config?.extraFee??0)*100)),award=(pot-fee)/100,cost=call.cost/100;
+ const first=[...s.players].sort((a,b)=>Number(a.seat<=s.button)-Number(b.seat<=s.button)||a.seat-b.seat)[0].name,tieAward=(Math.floor((pot-fee)/2)+(h.hero===first?(pot-fee)%2:0))/100;
+ let win=0,tie=0,n=0,exact=ctx.board.length>=4;const random=seeded(99791),samples=input.equitySamples??30000;
+ const cumulative=[];let total=0;for(const r of rows){total+=r.prob;cumulative.push(total);}
+ const pick=()=>{const x=random()*total;let lo=0,hi=rows.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(cumulative[mid]<x)lo=mid+1;else hi=mid;}return rows[lo];};
+ const score=(other,board,weight)=>{const a=evaluate([...cards,...board]).score,b=evaluate([...other,...board]).score;win+=weight*Number(a>b);tie+=weight*Number(a===b);n++;};
+ if(exact){
+  for(let i=0;i<rows.length;i++){if(cancel())return null;const r=rows[i];if(ctx.board.length===5)score(r.cards,ctx.board,r.prob);else{const deck=DECK.filter(c=>![...cards,...ctx.board,...r.cards].includes(c));for(const c of deck)score(r.cards,[...ctx.board,c],r.prob/deck.length);}if(i%32===31){onProgress('Exact hand equity · '+(i+1)+' / '+rows.length+' opponent combinations');await new Promise(r=>setTimeout(r,0));}}
+ }else{
+  for(let i=0;i<samples;i++){if(cancel())return null;const other=pick().cards,deck=DECK.filter(c=>![...cards,...ctx.board,...other].includes(c)),board=[...ctx.board];for(let j=0;board.length<5;j++){const k=j+Math.floor(random()*(deck.length-j));[deck[j],deck[k]]=[deck[k],deck[j]];board.push(deck[j]);}score(other,board,1/samples);if(i%500===499){onProgress('Hand-specific all-in equity · '+(i+1)+' / '+samples);await new Promise(r=>setTimeout(r,0));}}
+ }
+ const loss=Math.max(0,1-win-tie),ev=win*award+tie*tieAward-cost,second=win*(award-cost)**2+tie*(tieAward-cost)**2+loss*cost**2,se=exact?0:Math.sqrt(Math.max(0,second-ev*ev)/(n-1));
+ const routes=[{name:'Hero wins showdown',p:win,award},{name:'Split showdown',p:tie,award:tieAward},{name:'Hero loses showdown',p:loss,award:0}].filter(r=>r.p>1e-15).map(r=>({...r,investment:cost,payoff:r.award-cost,contribution:r.p*(r.award-cost)}));
+ const allActions=actions.map(a=>({...a,ev:a.kind==='call'?ev:0,policy:a.kind==='call'?ev>0?1:ev<0?0:.5:ev>0?0:ev<0?1:.5,routes:a.kind==='call'?routes:[{name:'Hero folds',p:1,award:0,investment:0,payoff:0,contribution:0}]})),sorted=[...allActions].sort((a,b)=>b.ev-a.ev);
+ return {model:'hand-specific-all-in',cards:[...cards],board:[...ctx.board],conditioning:input.conditioning||{source:'Observed-action model'},opponentRange:rows,equity:win+tie/2,win,tie,loss,exact,samples:n,se,callCost:cost,netPot:award,breakEven:cost/award,actions:sorted.map((a,i)=>({...a,rank:i+1,gap:sorted[0].ev-a.ev})),allActions,policy:allActions.map(a=>({...a,prob:a.policy})),tested:allActions.length,scope:'Exact private cards against the conditioned opponent range. River and turn enumerate remaining boards; preflop and flop sample legal boards. Best response to this fixed range, not a new equilibrium solve. No six-bucket averaging of Hero equity.'};
+};
 
 const analyzeCfr=async input=>{
  const {hand:h,step,onProgress=()=>{},cancel=()=>false}=input,ctx=publicContext(h,step,h.hero);
- const beliefs=input.beliefState||nodeBeliefs(input.hands||[],h,step,input.priors||{});
+ const originalBeliefs=input.beliefState||nodeBeliefs(input.hands||[],h,step,input.priors||{});
+ const conditioned=await wagerConditionedBeliefs({...input,beliefState:originalBeliefs});if(!conditioned||cancel())return null;
+ const {beliefs,conditioning}=conditioned;
+ const allIn=await analyzeAllIn({...input,beliefState:beliefs,conditioning});if(allIn||cancel())return allIn;
  const solved=await solveRiverCfr({...input,beliefState:beliefs},{...cfrBudget(ctx.board.length),...input.solveOptions,inspect:true,onProgress,cancel});
  if(!solved||cancel())return null;
- if(solved.unsupported)throw Error('The sampled CFR game has no support for this hand bucket. No heuristic recommendation has been substituted. Widen the range or try another case.');
- const {plan,...diagnostics}=solved,{game,node}=plan,b=game.ownType,unit=h.bb/100;
- const ownMass=game.marginals[0][b],conditional=game.mass.map((m,k)=>Math.floor(k/B)===b?m/ownMass:0),policy=strategy(node,true),values=cfrActionValues(plan)[b];
- function summarize(start,initial){
-  const routes=new Map();
-  function visit(n,mass,depth=0){
-   const probability=mass.reduce((s,m)=>s+m,0);
-   if(probability<=0)return {probability:0,value:0,children:[]};
-   if(n.terminal){
-    const t=n.terminal,total=mass.reduce((a,v)=>a+v,0),win=t.winner===null?mass.reduce((a,v,k)=>a+v*t.wins[k],0):0,tie=t.winner===null?mass.reduce((a,v,k)=>a+v*t.ties[k],0):0;
-    const outcomes=t.winner===null?[['Hero wins showdown',win,t.award],['Split showdown',tie,t.tieAward],['Hero loses showdown',Math.max(0,total-win-tie),0]]:[[t.winner===0?'Opponent folds':'Hero folds',total,t.winner===0?t.award:0]];
-    for(const [outcome,p,award] of outcomes){if(p<=1e-15)continue;const zero=Math.abs(t.investment)<1e-9,key=outcome+(zero?' · 0 BB further':' · paid continuation'),r=routes.get(key)||{name:key,p:0,award:0,investment:0,contribution:0,zeroInvestment:zero};r.p+=p;r.award+=p*award*unit;r.investment+=p*t.investment*unit;r.contribution+=p*(award-t.investment)*unit;routes.set(key,r);}
-    return {probability,value:mass.reduce((v,m,k)=>v+m*n.values[0][k]*unit,0),children:[]};
-   }
-   const policies=n.chance?null:strategy(n,true);
-   const children=n.children.map((child,a)=>{const result=visit(child,mass.map((m,k)=>m*(n.chance?n.probs[a][k]:policies[n.actor===0?Math.floor(k/B):k%B][a])),depth+1);return {...result,label:n.chance?'Board texture · '+n.groups[a]:n.street+' · '+game.names[n.actor]+' '+n.actions[a].label,conditionalProbability:result.probability/probability,ev:result.probability?result.value/result.probability:0};});
-   return {probability,value:children.reduce((s,c)=>s+c.value,0),children:depth<3?children.filter(c=>c.probability>1e-12):[]};
-  }
-  const tree=visit(start,initial);
-  const rows=[...routes.values()].map(r=>({...r,award:r.award/r.p,investment:r.investment/r.p,payoff:r.contribution/r.p}));
-  return {tree,routes:rows,zeroInvestmentProbability:rows.filter(r=>r.zeroInvestment).reduce((s,r)=>s+r.p,0),expectedInvestment:rows.reduce((s,r)=>s+r.p*r.investment,0)};
- }
- const actor=ctx.players.find(p=>p.name===h.hero),allActions=node.actions.map((a,i)=>{
-  const reach=game.marginals[0].reduce((v,m,t)=>v+m*policy[t][i],0);
-  const rows=game.rangeRows[0],bucketPrior=Array(B).fill(0);rows.forEach(r=>bucketPrior[r.type]+=r.prob);
-  const heroActionRange=reach>1e-15?rows.map(r=>({cards:r.cards,probability:r.prob/bucketPrior[r.type]*game.marginals[0][r.type]*policy[r.type][i]/reach})).filter(r=>r.probability>0).sort((a,b)=>b.probability-a.probability):[];
-  return {...a,ev:values[i]*unit,policy:policy[b][i],reach,heroActionRange,immediateInvestment:(a.kind==='bet'?a.to-actor.streetContribution:a.kind==='call'?Math.min(actor.stack,Math.max(0,ctx.level-actor.streetContribution)):0)/100,...summarize(node.children[i],conditional)};
- });
- const sorted=[...allActions].sort((a,b)=>b.ev-a.ev),best=sorted[0].ev;
- return {model:'coupled-cfr',...diagnostics,actions:sorted.slice(0,5).map((a,i)=>({...a,rank:i+1,gap:best-a.ev})),allActions,tested:allActions.length,board:[...ctx.board],beliefs:{priorHands:beliefs.learned?.hands||0,players:game.names.map((name,i)=>({name,publicCombos:game.rangeRows[i].length})),opponentCombos:comboMass(conditionCards(beliefs.filters[game.names[1]],[...ctx.board,...h.players.find(p=>p.name===h.hero).cards])).length}};
+
+ return inspectExact(solved,{...input,beliefState:beliefs,conditioning},{samples:input.evaluationSamples||600,onProgress,cancel});
 };
 
-return {riverGroup,flopRunoutGroup,preflopBoardGroup,buildRiverGame,trainRiver,measureRiver,solveRiverCfr,advanceCfrPlan,cfrPlanDecision,cfrStrategy,cfrActionValues,withCfrPolicy,cfrBudget,analyzeCfr};
+return {riverGroup,flopRunoutGroup,preflopBoardGroup,buildRiverGame,trainRiver,measureRiver,solveBucketCfr,solveRiverCfr,advanceCfrPlan,cfrPlanDecision,cfrStrategy,cfrActionValues,withCfrPolicy,cfrBudget,cfrActionLikelihood,wagerConditionedBeliefs,isAllInResponse,analyzeAllIn,analyzeCfr};
 })();
 const __exploration=(()=>{
+const {exactPolicyFor,exactPolicyRows,exactResponseAfter,priceExactProbe,exactHandKey}=__exactCfr;
 const {cfrStrategy,cfrActionValues,withCfrPolicy}=__riverCfr;
 const {advanceState}=__tree;
 const HYPOTHESES=['Continues more','CFR-like','Folds more'];
@@ -1811,21 +2057,69 @@ function chargeExploration(memory,report){
  if(!report.active)return;memory.remaining=Math.max(0,memory.remaining-report.costBB);memory.spent+=report.costBB;memory.handSpent+=report.costBB;memory.probes++;
 }
 function predictionAfterAction(plan,ctx,action,memory){
+ if(plan?.game.exact)return exactResponsePrediction(plan,action,memory);
  const index=plan.node.actions.findIndex(a=>a.id===action.id);if(index<0)return null;const next=structuredClone(ctx);if(advanceState(next,action)!=='action')return null;
  return responsePrediction(plan,plan.node.children[index],next,plan.game.ownType,memory);
 }
 
-return {HYPOTHESES,newExploration,restoreExploration,informationGain,responsePrediction,restorePrediction,observePrediction,explorationDecision,chargeExploration,predictionAfterAction};
+// Exact-combination response integration. Private predictions condition only on
+// the bot's own known cards. Public probe selection integrates both ranges and
+// uses the action's likelihood for each acting-player combination.
+function exactResponsePrediction(plan,action,memory,{publicRange=false,rootRows=null}={}){
+ const next=exactResponseAfter(plan,action);if(!next||next.ctx.street==='Preflop'||next.ctx.actor===plan.game.names[0]||action.kind!=='bet')return null;
+ const range=(plan.ranges||plan.game.rows)[1];let weighted;
+ if(publicRange){
+  const ownRows=rootRows||exactPolicyRows(plan),cardMass={},comboMass=new Map();let total=0;
+  for(const r of ownRows){const p=r.prob*(r.policy.find(a=>a.id===action.id)?.prob||0);total+=p;r.cards.forEach(c=>cardMass[c]=(cardMass[c]||0)+p);comboMass.set(exactHandKey(r.cards),p);}
+  weighted=range.map(r=>({...r,prob:r.prob*Math.max(0,total-(cardMass[r.cards[0]]||0)-(cardMass[r.cards[1]]||0)+(comboMass.get(exactHandKey(r.cards))||0))}));
+ }else weighted=range.filter(r=>!r.cards.some(c=>plan.game.own.includes(c)));
+ const total=sum(weighted.map(r=>r.prob));if(total<=1e-15)return null;
+ let actions,kernels;
+ for(const r of weighted){if(r.prob<=0)continue;const policy=exactPolicyFor(next,r.cards).policy;if(!actions){actions=policy.map(a=>({id:a.id,kind:a.kind,...(a.to===undefined?{}:{to:a.to})}));if(!actions.some(a=>a.kind==='fold'))return null;kernels=tilts.map(()=>actions.map(()=>0));}
+  tilts.forEach((tilt,t)=>{const probabilities=norm(policy.map(a=>(.99*a.prob+.01/policy.length)*Math.exp(a.kind==='fold'?tilt:0)));probabilities.forEach((p,a)=>kernels[t][a]+=r.prob/total*p);});
+ }
+ const key=contextKey(next.ctx),hypotheses=[...weights(memory,key)];return {key,actions,kernels,weights:hypotheses,information:informationGain(hypotheses,kernels)};
+}
+function chooseExactProbe(plan,ctx,memory){
+ const report={active:false,reason:'Exploration disabled',costBB:0,information:0,gain:0,mix:0,costScope:'public range average'};
+ if(!memory.enabled||!memory.horizon)return {report};
+ if(ctx.street==='Preflop'||ctx.actor!==plan.game.names[0])return {report:{...report,reason:'Probes are limited to postflop decisions'}};
+ const allowance=Math.min(.02,memory.remaining,.05-memory.handSpent);if(allowance<=1e-10)return {report:{...report,reason:'Exploration budget exhausted'}};
+ const rootRows=exactPolicyRows(plan),actions=rootRows[0]?.policy||[],stack=ctx.players.find(p=>p.name===ctx.actor).stack;
+ const candidates=actions.filter(a=>a.kind==='bet'&&!a.allIn&&a.cost<=Math.min(ctx.pot,.1*stack));
+ if(!candidates.length)return {report:{...report,reason:'No probe wager within the pot and stack limits'}};
+ // Compatible joint marginals of the acting range, independent of actual cards.
+ const opponent=(plan.ranges||plan.game.rows)[1],cm={},same=new Map();for(const r of opponent){r.cards.forEach(c=>cm[c]=(cm[c]||0)+r.prob);same.set(exactHandKey(r.cards),r.prob);}
+ const masses=rootRows.map(r=>r.prob*Math.max(0,1-(cm[r.cards[0]]||0)-(cm[r.cards[1]]||0)+(same.get(exactHandKey(r.cards))||0))),z=sum(masses);
+ const predictions=actions.filter(a=>a.kind==='bet').map(a=>({action:a,prediction:exactResponsePrediction(plan,a,memory,{publicRange:true,rootRows})})).filter(x=>x.prediction);
+ const currentInfo=predictions.reduce((v,x)=>v+x.prediction.information*rootRows.reduce((p,r,i)=>p+masses[i]/z*(r.policy.find(a=>a.id===x.action.id)?.prob||0),0),0);
+ const targets=predictions.map(x=>({...x,gain:x.prediction.information-currentInfo})).filter(x=>candidates.some(a=>a.id===x.action.id)&&x.gain>.001).sort((a,b)=>b.gain-a.gain);
+ if(!targets.length)return {report:{...report,reason:'No informative probe above the current policy'}};
+ return {target:targets[0],allowance,mixLimit:.05*Math.min(1,memory.horizon/20),report};
+}
+// Pricing is sampled over the public joint range, not the dealt bot hand. The
+// same mixture is applied to every holding, preserving a coherent public image.
+// The two-SE charge is an uncertainty adjustment, not a calibrated guarantee.
+const exactExplorationDecision=async (plan,ctx,memory,options={})=>{
+ if(options.cancel?.())return null;const choice=chooseExactProbe(plan,ctx,memory);if(!choice.target)return {plan,policy:exactPolicyFor(plan,plan.game.own).policy,report:choice.report};
+ const price=await priceExactProbe(plan,choice.target.action,options);if(!price)return null;
+ const mix=Math.min(choice.mixLimit,choice.allowance/Math.max(.001,price.upper)),cost=mix*price.upper;
+ if(mix<1e-6)return {plan,policy:exactPolicyFor(plan,plan.game.own).policy,report:{...choice.report,reason:'Pricing uncertainty leaves no useful probe mixture',pricing:price}};
+ const next={...plan,adjustment:{history:plan.history,actor:ctx.actor,targetId:choice.target.action.id,mix}},report={...choice.report,active:true,reason:'Testing continuation versus folding',target:choice.target.action.label,key:choice.target.prediction.key,costBB:cost,information:choice.target.prediction.information,gain:mix*choice.target.gain,mix,pricing:price};
+ return {plan:next,policy:exactPolicyFor(next,next.game.own).policy,report};
+};
+
+return {HYPOTHESES,newExploration,restoreExploration,informationGain,responsePrediction,restorePrediction,observePrediction,explorationDecision,chargeExploration,predictionAfterAction,exactResponsePrediction,chooseExactProbe,exactExplorationDecision};
 })();
 const __practice=(()=>{
 const {DECK,snapshot,playerKey}=__poker;
 const {createLiveHand,appendLiveAction,restoreLiveHand}=__live;
 const {TYPES,publicContext,actionPolicy,drawWeighted}=__policy;
-const {learnMemory,newBelief,beliefSummary,updateBelief,conditionCards,freshMemory,completeMemory,restoreMemory}=__learning;
+const {learnMemory,newBelief,beliefSummary,updateBelief,conditionCards,freshMemory,completeMemory,restoreMemory,restoreActionEvidence}=__learning;
 const {RESPONSE_PRIOR,trainResponse}=__adaptation;
 const {analyzeTree}=__tree;
-const {newExploration,restoreExploration,restorePrediction,explorationDecision,chargeExploration,predictionAfterAction,observePrediction}=__exploration;
-const {solveRiverCfr,advanceCfrPlan,cfrPlanDecision,cfrBudget}=__riverCfr;
+const {newExploration,restoreExploration,restorePrediction,explorationDecision,exactExplorationDecision,chargeExploration,predictionAfterAction,observePrediction}=__exploration;
+const {solveRiverCfr,advanceCfrPlan,cfrPlanDecision,cfrBudget,cfrActionLikelihood,wagerConditionedBeliefs,analyzeAllIn,isAllInResponse}=__riverCfr;
 function shuffled(random){const deck=[...DECK];for(let i=deck.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}return deck;}
 function newPractice(hands,type=0,previous=null,random=Math.random,options={}){
  if(!Number.isInteger(type)||!TYPES[type])throw Error('Choose a bot style.');
@@ -1847,16 +2141,17 @@ function rebuildPracticeBeliefs(p,hands){
  for(let i=0;i<h.events.length;i++)observe(p,h,i);
 }
 function observe(p,h,i){
- const e=h.events[i];if(e.type==='action'&&e.actor===h.hero&&p.explorationPending){observePrediction(p.exploration,p.explorationPending,e);p.explorationPending=null;}if(e.type==='street'||e.type==='show')p.explorationPending=null;if(p.cfrPlan){const next=advanceCfrPlan(p.cfrPlan,e);if(!next)p.planStatus='Observed action or card was outside the retained plan; a fresh solve is needed.';p.cfrPlan=next;}
+ const e=h.actionEvidence?.[i]?{...h.events[i],rangeLikelihood:h.actionEvidence[i].likelihood}:h.events[i];if(e.type==='action'&&e.actor===h.hero&&p.explorationPending){observePrediction(p.exploration,p.explorationPending,e);p.explorationPending=null;}if(e.type==='street'||e.type==='show')p.explorationPending=null;if(p.cfrPlan){const next=advanceCfrPlan(p.cfrPlan,e);if(!next)p.planStatus='Observed action or card was outside the retained plan; a fresh solve is needed.';p.cfrPlan=next;}
  if(e.type==='street')for(const n of Object.keys(p.filters))p.filters[n]=conditionCards(p.filters[n],e.board);
  if(e.type==='action'){
+  if(['bets','raises'].includes(e.action))p.wagerPrior={eventIndex:i,beliefs:{filters:structuredClone(p.filters),responses:structuredClone(p.responses),views:{},learned:{hands:p.learning?.sharedHands||0}}};
   const ctx=publicContext(h,i,e.actor),other=h.players.find(v=>v.name!==e.actor).name;ctx.responseModel=p.responses?.[e.actor];
   const update=updateBelief(p.filters[e.actor],ctx,e,beliefSummary(p.filters[other],ctx.board));p.filters[e.actor]=update.rows;trainResponse(p.responses?.[e.actor],ctx,update,e);
   if(e.actor===h.hero&&p.learning)p.learning.currentHeroActions++;
  }
  if(e.type==='show'&&e.cards?.length===2){for(const n of Object.keys(p.filters))p.filters[n]=conditionCards(p.filters[n],n===e.actor?[]:e.cards,n===e.actor?e.cards:null);if(e.actor===h.hero&&p.learning)p.learning.heroRevealed=true;}
 }
-function apply(p,command){const old=p.hand.events.length;p.hand=appendLiveAction(p.hand,command);p.hand.practice=true;for(let i=old;i<p.hand.events.length;i++)observe(p,p.hand,i);}
+function apply(p,command){const old=p.hand.events.length,evidence=p.hand.actionEvidence||{};p.hand=appendLiveAction(p.hand,command);p.hand.actionEvidence={...evidence};if(p.pendingActionLikelihood){const e=p.hand.events[old];if(e?.type==='action')p.hand.actionEvidence[old]={actor:e.actor,action:e.action,to:e.to??null,likelihood:p.pendingActionLikelihood,source:'Recorded bot strategy'};p.pendingActionLikelihood=null;}p.hand.practice=true;for(let i=old;i<p.hand.events.length;i++)observe(p,p.hand,i);}
 function practicePolicy(p){
  const h=p.hand,ctx=publicContext(h,h.events.length,h.live.actor),cards=h.live.actor===h.hero?h.players.find(v=>v.name===h.hero).cards:p.botCards,other=h.players.find(v=>v.name!==h.live.actor).name;
  ctx.responseModel=p.responses?.[h.live.actor];
@@ -1883,9 +2178,9 @@ function advancePractice(p,command=null,random=Math.random,options={}){
 // the bot's current posterior, with response parameters fitted before search.
 function botDecisionInput(p){
  const h=p.hand,bot=h.players.find(v=>v.name!==h.hero),board=snapshot(h,h.events.length).board;
- const visible={id:h.id,date:h.date,hero:bot.name,players:h.players.map(v=>({name:v.name,seat:v.seat,position:v.position,stack:v.stack,cards:v.name===bot.name?[...p.botCards]:[]})),events:structuredClone(h.events),button:h.button,bb:h.bb,sb:h.sb,totalFees:h.totalFees,warnings:[...h.warnings],live:{actor:bot.name}};
+ const visible={id:h.id,date:h.date,hero:bot.name,players:h.players.map(v=>({name:v.name,seat:v.seat,position:v.position,stack:v.stack,cards:v.name===bot.name?[...p.botCards]:[]})),events:structuredClone(h.events),actionEvidence:structuredClone(h.actionEvidence||{}),memoryStart:h.memoryStart,button:h.button,bb:h.bb,sb:h.sb,totalFees:h.totalFees,warnings:[...h.warnings],live:{actor:bot.name}};
  const filters=structuredClone(p.filters),responses=structuredClone(p.responses),ranges={...filters,[h.hero]:conditionCards(filters[h.hero],[...board,...p.botCards])};
- return {hands:[],hand:visible,step:h.events.length,config:{...p.config},iterations:100,beliefState:{filters,ranges,responses,views:{},learned:{hands:p.learning?.sharedHands||0}}};
+ return {hands:[],hand:visible,step:h.events.length,wagerPrior:p.wagerPrior,config:{...p.config},iterations:100,beliefState:{filters,ranges,responses,views:{},learned:{hands:p.learning?.sharedHands||0}}};
 }
 function decisionMix(result,prior,bb){
  // Conservative policy improvement, not a confidence bound or equilibrium solve.
@@ -1909,39 +2204,45 @@ const advancePracticeAdaptive=async (p,command=null,random=Math.random,onProgres
   if(p.hand.live.complete||p.hand.live.actor===p.hand.hero)return p;
   const input=botDecisionInput(p);let policy,engine='EV rollouts';
   const boardLength=snapshot(p.hand,p.hand.events.length).board.length;
-  if([0,3,4,5].includes(boardLength)){
+  if(isAllInResponse(input)){const conditioned=await wagerConditionedBeliefs({...input,onProgress,cancel});if(!conditioned||cancel())return null;const exact=await analyzeAllIn({...input,beliefState:conditioned.beliefs,conditioning:conditioned.conditioning,onProgress,cancel});if(!exact||cancel())return null;policy=exact.policy;p.cfrPlan=null;p.lastDecision={engine:'hand-specific-all-in',...exact};engine='Hand-specific all-in response';}
+  if(!policy&&[0,3,4,5].includes(boardLength)){
    const retained=cfrPlanDecision(p.cfrPlan);
-   if(retained){p.lastDecision={engine:p.cfrPlan.game.preflop?'preflop-river-cfr':p.cfrPlan.game.flopBoard?'flop-river-cfr':p.cfrPlan.game.turnBoard?'turn-river-cfr':'river-cfr',eventIndex:p.hand.events.length,...retained};policy=retained.policy;engine=p.cfrPlan.game.preflop?'Preflop → river CFR · retained plan':p.cfrPlan.game.flopBoard?'Flop → river CFR · retained plan':p.cfrPlan.game.turnBoard?'Turn → river CFR · retained plan':'River CFR · retained plan';}
+   if(retained){p.lastDecision={engine:p.cfrPlan.game.preflop?'preflop-river-cfr':p.cfrPlan.game.flopBoard?'flop-river-cfr':p.cfrPlan.game.turnBoard?'turn-river-cfr':'river-cfr',eventIndex:p.hand.events.length,...retained};policy=retained.policy;engine=p.cfrPlan.game.exact?'Exact-hand CFR · retained plan':p.cfrPlan.game.preflop?'Preflop → river CFR · retained plan':p.cfrPlan.game.flopBoard?'Flop → river CFR · retained plan':p.cfrPlan.game.turnBoard?'Turn → river CFR · retained plan':'River CFR · retained plan';}
    else{
     onProgress(boardLength===0?'Bot solving preflop actions with all later streets…':boardLength===3?'Bot solving flop actions with turn and river continuations…':boardLength===4?'Bot solving turn actions with river continuations…':'Bot solving the river betting game…');
-    const solved=await solveRiverCfr(input,{...cfrBudget(boardLength),onProgress,cancel});if(!solved||cancel())return null;
+    const solved=await solveRiverCfr(input,{...cfrBudget(boardLength),...(p.config?.cfrIterations?{iterations:p.config.cfrIterations}:{}),onProgress,cancel});if(!solved||cancel())return null;
     const {plan,...report}=solved;p.cfrPlan=plan;p.lastDecision={engine:boardLength===0?'preflop-river-cfr':boardLength===3?'flop-river-cfr':boardLength===4?'turn-river-cfr':'river-cfr',eventIndex:p.hand.events.length,replanReason:p.planStatus||'',...report};p.planStatus='';
-    if(!solved.unsupported){policy=solved.policy;engine=boardLength===0?'Preflop → river CFR':boardLength===3?'Flop → river CFR':boardLength===4?'Turn → river CFR':'River CFR';}
+    if(!solved.unsupported){policy=solved.policy;engine=solved.engine==='exact-hand-cfr'?'Exact-hand CFR':boardLength===0?'Preflop → river CFR':boardLength===3?'Flop → river CFR':boardLength===4?'Turn → river CFR':'River CFR';}
    }
   }
   if(!policy){onProgress('Bot evaluating your updated range…');const result=await analyzeTree({...input,onProgress,cancel});if(!result||cancel())return null;policy=decisionMix(result,practicePolicy(p),p.hand.bb);p.lastDecision={engine:'ev-rollouts',reason:p.lastDecision?.unsupported?'Actual hand bucket had no sampled support.':'CFR was unavailable; using the adaptive EV fallback.'};}
-  if(boardLength>=3&&p.cfrPlan&&['river-cfr','turn-river-cfr','flop-river-cfr','preflop-river-cfr'].includes(p.lastDecision?.engine)){
+  if(boardLength>=3&&p.cfrPlan?.game.exact){
+   const previous=p.lastDecision,ctx=publicContext(p.hand,p.hand.events.length,p.hand.live.actor),adjustment=await exactExplorationDecision(p.cfrPlan,ctx,p.exploration,{onProgress,cancel});if(!adjustment||cancel())return null;
+   p.cfrPlan=adjustment.plan;policy=adjustment.policy;chargeExploration(p.exploration,adjustment.report);p.exploration.last=adjustment.report;p.lastDecision={...previous,policy,exploration:adjustment.report};
+  }else if(boardLength>=3&&p.cfrPlan&&['river-cfr','turn-river-cfr','flop-river-cfr','preflop-river-cfr'].includes(p.lastDecision?.engine)){
    const previous=p.lastDecision,ctx=publicContext(p.hand,p.hand.events.length,p.hand.live.actor),adjustment=explorationDecision(p.cfrPlan,ctx,p.exploration);p.cfrPlan=adjustment.plan;
    chargeExploration(p.exploration,adjustment.report);p.exploration.last=adjustment.report;
    const updated=cfrPlanDecision(p.cfrPlan);policy=updated.policy;p.lastDecision={...previous,...updated,reused:previous.reused||false,baselineNashConv:previous.nashConv,exploration:adjustment.report};
-  }else p.exploration.last={active:false,reason:'Exploration is limited to supported postflop CFR decisions',costBB:0,information:0,gain:0,mix:0};
+  }else p.exploration.last={active:false,reason:'Probes are limited to postflop decisions with a supported response',costBB:0,information:0,gain:0,mix:0};
   const a=drawWeighted(policy,random);
+  p.pendingActionLikelihood=cfrActionLikelihood(p.cfrPlan,a);
   p.explorationPending=boardLength>=3&&p.cfrPlan?predictionAfterAction(p.cfrPlan,publicContext(p.hand,p.hand.events.length,p.hand.live.actor),a,p.exploration):null;
   p.lastAction='Bot · '+engine+': '+a.label;apply(p,{kind:a.kind,to:a.to,actor:p.hand.live.actor});
   advancePractice(p,null,random,{pauseAtBot:true});
  }
  throw Error('Adaptive practice action limit reached.');
 };
-function practiceSave(p){if(!p)return null;return {spec:p.hand.live.spec,commands:p.hand.live.commands,type:p.type,botCards:p.botCards,deck:p.deck,config:p.config,memoryStart:structuredClone(p.hand.memoryStart),exploration:structuredClone(p.exploration||newExploration()),explorationPending:structuredClone(p.explorationPending||null),...(p.playerId?{playerId:p.playerId,playerName:p.playerName}: {})};}
+function practiceSave(p){if(!p)return null;return {spec:p.hand.live.spec,commands:p.hand.live.commands,actionEvidence:p.hand.actionEvidence||{},type:p.type,botCards:p.botCards,deck:p.deck,config:p.config,memoryStart:structuredClone(p.hand.memoryStart),exploration:structuredClone(p.exploration||newExploration()),explorationPending:structuredClone(p.explorationPending||null),...(p.playerId?{playerId:p.playerId,playerName:p.playerName}: {})};}
 function practiceRestore(saved,hands){
  if(!saved||!Array.isArray(saved.deck)||saved.deck.length>48||!Array.isArray(saved.botCards)||saved.botCards.length!==2||!TYPES[saved.type]||!Number.isInteger(saved.type))throw Error('Invalid practice session.');
  const hand=restoreLiveHand(saved.spec,saved.commands),board=snapshot(hand,hand.events.length).board,cards=[...hand.players.find(p=>p.name===hand.hero).cards,...saved.botCards,...saved.deck,...board];
  if(hand.players.length!==2||hand.live.spec.heroSeat!==1||hand.sb!==5||hand.bb!==10||cards.length!==52||new Set(cards).size!==52||cards.some(c=>!DECK.includes(c)))throw Error('Practice deck or table settings are invalid.');
  if(hand.events.some(e=>e.type==='show'&&e.actor!==hand.hero&&e.cards.some(c=>!saved.botCards.includes(c))))throw Error('Practice showdown does not match its saved private cards.');
  if(hand.live.actor&&hand.live.actor!==hand.hero)throw Error('Practice save must be at your decision.');
+ hand.actionEvidence=restoreActionEvidence(saved.actionEvidence,hand);
  hand.memoryStart=saved.memoryStart?restoreMemory(saved.memoryStart):learnMemory(hands,hand);
  if(saved.playerId&&(!/^player_[a-zA-Z0-9_-]{8,80}$/.test(saved.playerId)||typeof saved.playerName!=='string'||!saved.playerName.trim()||saved.playerName.length>30||hand.players[0].memoryKey!=='Practice player '+saved.playerId))throw Error('Invalid saved player identity.');
- hand.practice=true;const p={hand,type:saved.type,botCards:[...saved.botCards],deck:[...saved.deck],config:{rakePct:5,rakeCap:1,extraFee:0},lastAction:'Practice restored',...(saved.playerId?{playerId:saved.playerId,playerName:saved.playerName}: {})};rebuildPracticeBeliefs(p,[]);p.exploration=restoreExploration(saved.exploration);p.explorationPending=restorePrediction(saved.explorationPending);return p;
+ hand.practice=true;const p={hand,type:saved.type,botCards:[...saved.botCards],deck:[...saved.deck],config:{rakePct:5,rakeCap:1,extraFee:0,cfrIterations:[150,600,2000,8000].includes(saved.config?.cfrIterations)?saved.config.cfrIterations:0},lastAction:'Practice restored',...(saved.playerId?{playerId:saved.playerId,playerName:saved.playerName}: {})};rebuildPracticeBeliefs(p,[]);p.exploration=restoreExploration(saved.exploration);p.explorationPending=restorePrediction(saved.explorationPending);return p;
 }
 
 return {newPractice,practicePolicy,advancePractice,botDecisionInput,decisionMix,advancePracticeAdaptive,practiceSave,practiceRestore};
@@ -1997,57 +2298,58 @@ return {validPlayerId,createPlayer,restorePlayers,rememberPlayer,attachPlayer};
 const __learningUI=(()=>{
 const {HYPOTHESES}=__exploration;
 const {snapshot,playerKey}=__poker;
-const {TYPES,TYPE_PRIOR,publicContext,legalActions}=__policy;
-const {typeMass,comboMass}=__learning;
+const {TYPES,publicContext,legalActions}=__policy;
+const {comboMass}=__learning;
 const {treeAvailability}=__tree;
 const {tableView}=__liveUI;
 const {RESPONSE_FEATURES}=__adaptation;
 const pct=n=>(100*n).toFixed(1)+'%';
 const bb=(n,h)=>(n*100/h.bb).toFixed(2)+' BB';
-const responseTable=model=>`<details class="response-fit"><summary>Learned action responses · ${model?.actions||0} observations</summary><p class="small-note">Each action fits these player-specific tendencies immediately. Recent rates use exponential weighting with an eight-opportunity half-life in each situation. Older evidence fades; total counts are retained only for reference. Predictions also learn from candidate hand strength, draws, board texture, price, stack pressure, perceived range and bet size. Hidden hands are weighted by the estimated range, not treated as known.</p><table><thead><tr><th>Situation</th><th>Observed bet / raise</th><th>Recent bet / raise rate</th></tr></thead><tbody>${Object.entries(model?.contexts||{}).map(([key,c])=>`<tr><td>${key}</td><td>${c.counts.bet} / ${c.n}</td><td>${c.weight?pct(c.recent.bet/c.weight):'—'}</td></tr>`).join('')||'<tr><td colspan="3">No observations yet.</td></tr>'}</tbody></table><details><summary>Learned feature effects</summary><p class="small-note">Largest coefficients by situation. These are logit adjustments on scaled features, not probabilities or proof of a player’s strategy. Unobserved hands remain uncertain.</p><table><thead><tr><th>Situation · action</th><th>Feature</th><th>Weight</th></tr></thead><tbody>${Object.entries(model?.contexts||{}).flatMap(([key,c])=>Object.entries(c.weights||{}).flatMap(([a,w])=>w.map((v,i)=>({key,a,v,i})))).filter(x=>Math.abs(x.v)>.001).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,8).map(x=>`<tr><td>${x.key} · ${x.a}</td><td>${RESPONSE_FEATURES[x.i]}</td><td>${x.v.toFixed(3)}</td></tr>`).join('')||'<tr><td colspan="3">No feature effects learned yet.</td></tr>'}</tbody></table></details></details>`;
-const distribution=rows=>`<div class="belief-bars">${TYPES.map((t,i)=>`<div><span>${t.label}</span><div><i style="width:${100*rows[i]}%"></i></div><b>${pct(rows[i])}</b></div>`).join('')}</div>`;
-function engineControl(engine){return `<div class="engine-control"><label>Analysis engine<select id="analysis-engine"><option value="belief" ${engine==='belief'?'selected':''}>Coupled CFR · heads-up</option><option value="legacy" ${engine==='legacy'?'selected':''}>Earlier scenario models · up to 6 preflop</option></select></label><span>Live cases, replay and practice use the same restricted CFR solver. Earlier scenario models remain separate.</span></div>`;}
+const responseTable=model=>`<details class="response-fit"><summary>Learned action responses · ${model?.actions||0} observations</summary><p class="small-note">Each action fits these player-specific tendencies immediately. Recent rates use exponential weighting with an eight-opportunity half-life in each situation. Older evidence fades; total counts are retained only for reference. Predictions also learn from candidate hand strength, draws, board texture, price, stack pressure, perceived range and bet size. Hidden hands are weighted by the estimated range, not treated as known.</p><table><thead><tr><th>Situation</th><th>Observed bet / raise</th><th>Recent bet / raise rate</th></tr></thead><tbody>${Object.entries(model?.contexts||{}).map(([key,c])=>`<tr><td>${key}</td><td>${c.counts.bet} / ${c.n}</td><td>${c.weight?pct(c.recent.bet/c.weight):'—'}</td></tr>`).join('')||'<tr><td colspan="3">No observations yet.</td></tr>'}</tbody></table><details><summary>Behavioral uncertainty · approximate</summary><p>Each situation has 60 continuous coefficients: an intercept and 14 features for each action group. Predictive probabilities average four antithetic Gaussian parameter draws. The table shows intercept means and approximate standard deviations; absent contexts start at mean 0, SD 0.50. Precision discounts toward the prior. This diagonal curvature approximation omits coefficient correlations and is not calibrated confidence.</p><table><thead><tr><th>Situation · action</th><th>Mean</th><th>Approx. SD</th></tr></thead><tbody>${Object.entries(model?.contexts||{}).flatMap(([key,c])=>Object.entries(c.theta).map(([g,v])=>`<tr><td>${key} · ${g}</td><td>${v.toFixed(3)}</td><td>${(1/Math.sqrt(c.precision?.[g]?.[0]||4)).toFixed(3)}</td></tr>`)).join('')||'<tr><td colspan="3">Prior: mean 0, SD 0.50.</td></tr>'}</tbody></table></details><details><summary>Learned feature effects</summary><p class="small-note">Largest coefficients by situation. These are logit adjustments on scaled features, not probabilities or proof of a player’s strategy. Unobserved hands remain uncertain.</p><table><thead><tr><th>Situation · action</th><th>Feature</th><th>Weight</th></tr></thead><tbody>${Object.entries(model?.contexts||{}).flatMap(([key,c])=>Object.entries(c.weights||{}).flatMap(([a,w])=>w.map((v,i)=>({key,a,v,i})))).filter(x=>Math.abs(x.v)>.001).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,8).map(x=>`<tr><td>${x.key} · ${x.a}</td><td>${RESPONSE_FEATURES[x.i]}</td><td>${x.v.toFixed(3)}</td></tr>`).join('')||'<tr><td colspan="3">No feature effects learned yet.</td></tr>'}</tbody></table></details></details>`;
+
+function engineControl(engine){return `<div class="engine-control"><label>Analysis engine<select id="analysis-engine"><option value="belief" ${engine==='belief'?'selected':''}>Exact-hand CFR · heads-up</option><option value="legacy" ${engine==='legacy'?'selected':''}>Earlier scenario models · up to 6 preflop</option></select></label><span>Live cases, replay and practice use the same restricted CFR solver. Earlier scenario models remain separate.</span></div>`;}
 function branches(node,h,esc,depth=0){
  if(!node.children.length)return '';
  const children=[...node.children].sort((a,b)=>b.visits-a.visits),shown=children.slice(0,8);
  return `<div class="tree-branches">${shown.map(c=>`<details><summary>${esc(c.label)} <b>${pct(c.conditionalProbability)} of parent</b></summary><p>Route reach ${pct(c.probability)} · ${c.visits} samples · conditional EV ${bb(c.ev,h)} · award ${bb(c.expectedAward,h)} · new investment ${bb(c.expectedInvestment,h)}</p><details><summary>Opponent range at this node</summary><p class="small-note">Sampled conditional holdings; small branches are noisy. Top 8 shown, full sampled range in tree export.</p><table><thead><tr><th>Cards</th><th>Branch probability</th><th>Samples</th></tr></thead><tbody>${c.opponentRange.slice(0,8).map(r=>`<tr><td>${esc(r.cards.join(' '))}</td><td>${pct(r.probability)}</td><td>${r.samples}</td></tr>`).join('')}</tbody></table></details>${depth<2?branches(c,h,esc,depth+1):''}</details>`).join('')}${children.length>8?`<p class="small-note">${children.length-8} less frequent branches omitted here; the tree export includes every sampled branch.</p>`:''}</div>`;
 }
 function cfrBranches(node,h,esc){
- return node.children?.length?`<div class="tree-branches">${node.children.map(c=>`<details><summary>${esc(c.label)} · ${pct(c.conditionalProbability)} of parent</summary><p>Reach ${pct(c.probability)} · Conditional EV ${bb(c.ev,h)}</p>${cfrBranches(c,h,esc)}</details>`).join('')}</div>`:'';
+ return node.children?.length?`<div class="tree-branches">${node.children.slice(0,8).map(c=>`<details><summary>${esc(c.label)} · ${pct(c.conditionalProbability)} of parent</summary><p>Reach ${pct(c.probability)} · Conditional EV ${bb(c.ev,h)}</p>${cfrBranches(c,h,esc)}</details>`).join('')}</div>`:'';
+}
+function allInPanel(h,r,esc){
+ return `<section class="panel top-actions learning-tree cfr-analysis"><span class="eyebrow">HAND-SPECIFIC ALL-IN RESPONSE</span><h2>${esc(r.cards.join(' '))} · call or fold</h2><p>Equity ${pct(r.equity)} · break-even showdown share ${pct(r.breakEven)} · call ${bb(r.callCost,h)} · pot available after fees ${bb(r.netPot,h)}.</p><p>${r.exact?'Remaining boards enumerated exactly':r.samples.toLocaleString()+' legal boards sampled; call EV ± '+bb(1.96*r.se,h)+' approximate MC margin'}. Your exact two cards are evaluated; no Hero bucket average is used. The sampling margin does not measure uncertainty about the opponent model.</p><p><strong>Opponent range: ${esc(r.conditioning.source)}</strong>. ${esc(r.conditioning.note||'')}${r.conditioning.modeledAction?' Modeled wager: '+esc(r.conditioning.modeledAction)+'.':''}${r.conditioning.mappedSize?' The observed size was mapped to the nearest available model size.':''}</p><div class="table-scroll"><table><thead><tr><th>Action</th><th>EV</th><th>Best response to this range</th></tr></thead><tbody>${r.allActions.map(a=>`<tr><th>${esc(a.label)}</th><td>${bb(a.ev,h)}</td><td>${pct(a.policy)}</td></tr>`).join('')}</tbody></table></div><p class="small-note">This is a terminal best response to a fixed estimated range, not a CFR mixed-strategy frequency or confidence score. Near zero EV, sampling uncertainty may change the preference. Earlier contributions are sunk.</p><details open><summary>Call outcomes</summary><div class="table-scroll"><table><thead><tr><th>Outcome</th><th>Probability</th><th>Net payoff</th><th>EV contribution</th></tr></thead><tbody>${r.allActions.find(a=>a.kind==='call').routes.map(t=>`<tr><th>${esc(t.name)}</th><td>${pct(t.p)}</td><td>${bb(t.payoff,h)}</td><td>${bb(t.contribution,h)}</td></tr>`).join('')}</tbody></table></div></details><details><summary>Opponent’s surviving wager range · ${r.opponentRange.length} combinations</summary><p>Action-conditioned probabilities, normalized after removing your exact cards and the public board. Top 30 shown; all combinations are included in the export.</p><div class="table-scroll"><table><thead><tr><th>Cards</th><th>Probability</th></tr></thead><tbody>${r.opponentRange.slice(0,30).map(x=>`<tr><td>${esc(x.cards.join(' '))}</td><td>${pct(x.prob)}</td></tr>`).join('')}</tbody></table></div></details><button class="button secondary" data-action="export-tree">Export hand-specific analysis & range</button><button class="button primary" data-action="rank-actions">Recalculate this case</button><p class="small-note">${esc(r.scope)}</p></section>`;
 }
 function treePanel(h,step,state,esc){
- const reason=treeAvailability(h,step),r=state.ranking?.model==='coupled-cfr'?state.ranking:null,fees=state.practice?.hand.id===h.id?{...state.config,...state.practice.config}:state.config;
- const table=rows=>`<div class="table-scroll"><table><thead><tr><th>Action</th><th>CFR frequency</th><th>EV</th><th>Public range reach</th></tr></thead><tbody>${rows.map(a=>`<tr><th>${esc(a.label)}</th><td>${pct(a.policy)}</td><td>${bb(a.ev,h)}</td><td>${pct(a.reach)}</td></tr>`).join('')}</tbody></table></div>`;
- return `<section class="panel top-actions learning-tree cfr-analysis"><div class="section-title"><div><span class="eyebrow">COUPLED CFR · FRESH SOLVE</span><h2>Top 5 EV actions</h2></div></div>${engineControl(state.config.engine)}<p>Set the cards and actions in Live hand, or select a Hero decision in replay. Solve the current street together with its remaining streets. Frequencies and EV use the same average CFR strategy.</p><div class="ranking-toolbar"><button class="button primary" data-action="rank-actions" ${reason||state.loading?'disabled':''}>${state.loading?esc(state.rankProgress||'Building beliefs…'):'Solve this case with CFR'}</button></div>${reason?`<p class="notice">${esc(reason)}</p>`:''}<p class="small-note">Fees: ${fees.rakePct??5}% · ${bb(fees.rakeCap??1,h)} cap · no flop, no drop${fees.extraFee?' · extra fee '+bb(fees.extraFee,h):''}. EV is net from this decision; earlier contributions are sunk. This is a fresh baseline solve for Hero’s hand bucket, not a replay of a saved bot decision or its exploration adjustment.</p>${r?`
- <p class="ranking-context">${esc(r.street)} → showdown · ${r.iterations.toLocaleString()} CFR iterations · ${r.samples.toLocaleString()} sampled compatible pairs · ${r.buckets} hand buckets per player. Hero’s bucket: ${r.ownBucket}.</p>
- <p>Restricted-game deviation gap: <strong>${r.nashConv.toFixed(4)} BB</strong>. This measures remaining profitable deviations in the sampled game, not full Hold’em exploitability or a confidence interval.</p>
- <details><summary>Board blockers & starting ranges</summary><p>Board: ${esc(r.board.join(' ')||'Preflop')}. Every combination containing these exact cards is removed before this solve. Surviving weights are renormalized. Your private cards additionally block the opponent’s range in your belief view (${r.beliefs.opponentCombos} combinations).</p><p>${r.beliefs.players.map(p=>esc(p.name)+': '+p.publicCombos+' public combinations').join(' · ')}. ${r.beliefs.priorHands} earlier hands informed the starting beliefs. The public CFR game samples compatible pairs from both ranges; your cards select a bucket without being revealed to the opponent. EV is averaged within that bucket.</p></details>
- <ol class="ranked-actions">${r.actions.map(a=>`<li><details class="ranked-action" ${a.rank===1?'open':''}><summary><span class="rank-number">${a.rank}</span><span class="rank-label"><b>${esc(a.label)}</b><small>CFR frequency ${pct(a.policy)}</small></span><span class="rank-ev"><b>${bb(a.ev,h)}</b><small>Conditional action EV</small></span><span class="rank-gap">${a.rank===1?'Highest EV':bb(a.gap,h)+' below'}<small>Inspect outcomes</small></span></summary><div class="rank-routes">
- <p><strong>Immediate cost ${bb(a.immediateInvestment,h)}</strong> · Expected total further investment ${bb(a.expectedInvestment,h)} · No net further investment ${pct(a.zeroInvestmentProbability)}.</p><p class="small-note">Total investment is measured through the end of the hand, after uncalled chips are returned. A bet followed by an opponent fold can therefore have zero net investment despite its immediate cost.</p>
- <div class="table-scroll"><table><thead><tr><th>Terminal outcome</th><th>Probability</th><th>Pot award</th><th>Further investment</th><th>Net payoff</th><th>EV contribution</th></tr></thead><tbody>${a.routes.map(t=>`<tr><th>${esc(t.name)}</th><td>${pct(t.p)}</td><td>${bb(t.award,h)}</td><td>${bb(t.investment,h)}</td><td>${bb(t.payoff,h)}</td><td>${bb(t.contribution,h)}</td></tr>`).join('')}</tbody></table></div><p>Probability total ${pct(a.routes.reduce((s,t)=>s+t.p,0))} · EV ${bb(a.ev,h)}</p>
- <details><summary>CFR continuation tree · first three branches</summary><p class="small-note">Action and public texture probabilities use the solved strategy, conditional on Hero’s bucket and this root action. All later continuations enter EV; only the first three branch levels are displayed.</p>${cfrBranches(a.tree,h,esc)}</details><details><summary>Hero range after this action</summary><p>Public range reach ${pct(a.reach)}. Starting combinations are reweighted by the CFR action probability of their bucket. Within-bucket distinctions remain approximate. Top 12 shown.</p>${a.heroActionRange.length?`<div class="table-scroll"><table><thead><tr><th>Cards</th><th>Conditional probability</th></tr></thead><tbody>${a.heroActionRange.slice(0,12).map(x=>`<tr><td>${esc(x.cards.join(' '))}</td><td>${pct(x.probability)}</td></tr>`).join('')}</tbody></table></div>`:'<p>This action has no positive reach under the average strategy; no conditional range is defined.</p>'}</details></div></details></li>`).join('')}</ol>
- <details open><summary>All legal root actions · including check when available</summary>${table(r.allActions)}</details><button class="button secondary" data-action="export-tree">Export CFR analysis & ranges</button><p class="small-note">${esc(r.scope)}</p>`:'<p class="ranking-empty">The solve uses the exact current board and learned starting ranges. Unsupported cases show a message; no heuristic EV is silently substituted.</p>'}<p class="small-note">Future cards are integrated as texture groups, and hand buckets remain fixed within a solve. Card-specific improvements within a bucket are not fully represented. A fresh solve after a board change removes exact blockers again. Rake is included; this is an approximate restricted strategy, not full-game GTO. The solver uses learned ranges, but does not directly optimize against learned response coefficients.</p><button class="text-button" data-action="view" data-value="learning">Inspect learned ranges and Hero image</button></section>`;
+ if(state.ranking?.model==='hand-specific-all-in')return allInPanel(h,state.ranking,esc);
+ const reason=treeAvailability(h,step),r=state.ranking?.model==='exact-hand-cfr'?state.ranking:null;
+ return `<section class="panel top-actions learning-tree cfr-analysis"><span class="eyebrow">EXACT-HAND SAMPLED CFR</span><h2>Top 5 EV actions</h2>${engineControl(state.config.engine)}<p>Each private combination and exact public board has its own strategy. The remaining streets are trained together using sampled deals and restricted future bet sizes.</p><label>Training iterations <select id="cfr-iterations" ${state.loading?'disabled':''}>${[[0,'Street default'],[150,'150 · quick inspection'],[600,'600'],[2000,'2,000'],[8000,'8,000 · slow']].map(([v,t])=>`<option value="${v}" ${(state.config.cfrIterations||0)===v?'selected':''}>${t}</option>`).join('')}</select></label><button class="button primary" data-action="rank-actions" ${reason||state.loading?'disabled':''}>${state.loading?esc(state.rankProgress||'Building beliefs…'):'Solve this case with CFR'}</button>${reason?`<p class="notice">${esc(reason)}</p>`:''}<p class="small-note">EV is net from this decision, after configured fees. Earlier contributions are sunk. Estimates evaluate the exact selected hand under the average strategy shrunk toward the learned baseline; unseen continuations use the learned baseline. This is a fresh solve, not a replay of a saved bot decision.</p>${r?`
+ <p><strong>${r.iterations.toLocaleString()} iterations · ${r.informationSets.toLocaleString()} exact information sets</strong></p><p>Your hand: ${r.rootUpdates} regret updates · ${r.averageVisits} average-strategy visits. Trained-policy weight for your hand: ${pct(r.trainedPolicyWeight)} (16 baseline pseudo-visits). Root range coverage: ${pct(r.rootCoverage)}. Baseline-only continuation lookups: ${pct(r.fallbackRate)}.</p><p class="notice">${r.averageVisits<20?'Low training coverage for this hand. Treat the displayed mixture as provisional. ':''}${r.memoryLimited?'The 60,000-state memory limit was reached; new states used uncached baseline policies. ':''}No convergence or full-game exploitability bound is available. More iterations do not fix model bias. MC margins measure rollout sampling error only.</p><p>Opponent conditioning: ${esc(r.conditioning?.source||'Observed-action model')}. ${esc(r.conditioning?.note||'')}</p>
+ <details><summary>Exact card blockers & opponent range</summary><p>Board: ${esc(r.board.join(' ')||'Preflop')}. Your cards: ${esc(r.cards.join(' '))}. Impossible combinations are removed and weights renormalized. ${r.opponentRange.length} opponent combinations survive. Neither the opponent’s actual hidden cards nor later replay cards enter this solve.</p><table><thead><tr><th>Cards</th><th>Probability</th></tr></thead><tbody>${r.opponentRange.slice(0,20).map(x=>`<tr><td>${esc(x.cards.join(' '))}</td><td>${pct(x.prob)}</td></tr>`).join('')}</tbody></table></details>
+ <ol class="ranked-actions">${r.actions.map(a=>`<li><details class="ranked-action" ${a.rank===1?'open':''}><summary><span class="rank-number">${a.rank}</span><span class="rank-label"><b>${esc(a.label)}</b><small>Played mixture ${pct(a.policy)}</small></span><span class="rank-ev"><b>${bb(a.ev,h)}</b><small>± ${bb(1.96*a.se,h)} MC margin</small></span><span class="rank-gap">${a.rank===1?'Highest estimate':bb(a.gap,h)+' below'}<small>Inspect outcomes</small></span></summary><div class="rank-routes"><p>Immediate cost ${bb(a.immediateInvestment,h)} · Expected total further investment ${bb(a.expectedInvestment,h)} · Zero net further investment ${pct(a.zeroInvestmentProbability)}.</p><p class="small-note">Investment includes later bets and calls, after uncalled chips are returned. A check costs zero now; later play may cost more. Frequencies are policy estimates, not confidence scores.</p><div class="table-scroll"><table><thead><tr><th>Terminal outcome</th><th>Probability</th><th>Pot award</th><th>Further investment</th><th>Net payoff</th><th>EV contribution</th></tr></thead><tbody>${a.routes.map(t=>`<tr><th>${esc(t.name)}</th><td>${pct(t.p)}</td><td>${bb(t.award,h)}</td><td>${bb(t.investment,h)}</td><td>${bb(t.payoff,h)}</td><td>${bb(t.contribution,h)}</td></tr>`).join('')}</tbody></table></div><p>Probability total ${pct(a.routes.reduce((s,t)=>s+t.p,0))} · EV ${bb(a.ev,h)}</p><details><summary>Sampled continuation tree · first three events (top 8 children per node)</summary>${a.tree?cfrBranches(a.tree,h,esc):'<p>No continuation events.</p>'}</details><details><summary>Hero range after this action</summary><p>Public range reach ${pct(a.reach)}. Each combination is weighted by its own action probability. Top 12 shown; full distribution exported.</p><table><thead><tr><th>Cards</th><th>Probability</th></tr></thead><tbody>${a.heroActionRange.slice(0,12).map(x=>`<tr><td>${esc(x.cards.join(' '))}</td><td>${pct(x.probability)}</td></tr>`).join('')}</tbody></table></details></div></details></li>`).join('')}</ol>
+ <details open><summary>All legal root actions · including check when available</summary><div class="table-scroll"><table><thead><tr><th>Action</th><th>Played mixture</th><th>EV</th><th>Public range reach</th></tr></thead><tbody>${r.allActions.map(a=>`<tr><td>${esc(a.label)}</td><td>${pct(a.policy)}</td><td>${bb(a.ev,h)}</td><td>${pct(a.reach)}</td></tr>`).join('')}</tbody></table></div></details><button class="button secondary" data-action="export-tree">Export CFR analysis & ranges</button><p class="small-note">${esc(r.scope)}</p>`:'<p>Choose a case above. Training coverage and baseline use will be shown with every result. Higher budgets can take a while, especially before the flop.</p>'}<button class="text-button" data-action="view" data-value="learning">Inspect learned ranges and Hero image</button></section>`;
 }
 function learningView(h,step,state,esc){
  const node=state.beliefNode,learned=node?.learned;
- return `<section class="panel learned-panel"><div class="section-title"><div><span class="eyebrow">OBSERVATIONS → BELIEFS → ACTIONS</span><h2>Ranges, uncertainty & your image</h2></div><button class="button primary" data-action="learn-beliefs" ${state.loading?'disabled':''}>${state.loading?esc(state.rankProgress||'Learning…'):'Update beliefs at this action'}</button></div><p>Only completed hands before this hand, plus its visible action prefix, are used. Opponent-specific Hero images use shared tables and publicly revealed cards. No later replay cards or results enter this node.</p>${node?`<p class="memory-scope">${learned.hands} earlier hands summarized · ${h.memoryStart?'compact session memory':'history window up to 200'} · ${step} current events observed</p><div class="belief-grid">${h.players.map(p=>{const key=playerKey(h,p),record=learned.profiles[key],rows=node.ranges[p.name],top=comboMass(rows).slice(0,12);return `<article class="belief-card"><h3>${esc(p.name)}</h3><p>${record?.hands||0} previous hands · ${record?.actions||0} actions · mean predictive loss ${record?.actions?(record.logLoss/record.actions).toFixed(3):'—'} nats</p>${distribution(typeMass(rows))}${responseTable(node.responses[p.name])}<details><summary>Highest-weight surviving combinations</summary><p class="small-note">${p.name===h.hero?'Public hypothetical range; your actual cards are not supplied to the observer.':'Your hole cards and the public board block impossible combinations.'} Showing 12; export includes the full distribution.</p><table><thead><tr><th>Combination</th><th>Probability</th></tr></thead><tbody>${top.map(r=>`<tr><td>${esc(r.cards.join(' '))}</td><td>${pct(r.prob)}</td></tr>`).join('')}</tbody></table></details>${node.views[p.name]?`<h4>${esc(p.name)}’s modeled view of Hero</h4>${distribution(typeMass(node.views[p.name].rows))}<p class="small-note">${learned.images[node.views[p.name].key]?.hands||0} earlier shared hands. This is an inferred public image, not direct knowledge of the opponent’s beliefs.</p>`:''}</article>`;}).join('')}</div><button class="button secondary" data-action="export-beliefs">Export weighted ranges & model posteriors</button>`:'<div class="ev-empty"><h3>See what each action taught the model</h3><p>Build the beliefs to inspect combination probabilities, candidate styles and each player’s view of Hero.</p></div>'}<details open class="learning-objectives"><summary>Learning objective, play objective and constraints</summary><p><strong>Learn:</strong> fit contextual action logits and hand/board/price/range feature coefficients by posterior-weighted online predictive-loss gradients, and multiply the joint hand/style weights by the likelihood of each observed action, then normalize. Predictive loss is −log P(observed action), recorded before updating. Response coefficients forget old evidence with an eight-opportunity half-life per situation and keep a constant learning step. Style beliefs relax toward the baseline prior between hands with an eight-hand half-life. Revealed hands are a selected sample; the reveal decision itself is not fitted.</p><p><strong>Play:</strong> coupled CFR trains both players’ strategies through the remaining streets in a sampled, restricted heads-up game. The case panel reports action values and frequencies under that same average strategy. Learned ranges initialize the solve; learned response coefficients are not directly optimized against. Earlier scenario models use separate heuristics.</p><p><strong>Constraints:</strong> probabilities sum to one; stacks, legal raises and action order are enforced; no duplicated cards; only own cards and public beliefs reach a player policy. Equity realization and later payments emerge from the sampled betting lines. Opponent ranges are factored, so multiway card/action correlations are not solved.</p><p>Style weights express uncertainty within these four candidate models. They do not certify that any model describes a real player. Bot hands use separate practice profiles and do not train imported players. Historical statistics remain available in Player memory.</p></details></section>`;
+ return `<section class="panel learned-panel"><div class="section-title"><div><span class="eyebrow">OBSERVATIONS → BELIEFS → ACTIONS</span><h2>Ranges, uncertainty & your image</h2></div><button class="button primary" data-action="learn-beliefs" ${state.loading?'disabled':''}>${state.loading?esc(state.rankProgress||'Learning…'):'Update beliefs at this action'}</button></div><p>Only completed hands before this hand, plus its visible action prefix, are used. Opponent-specific Hero images use shared tables and publicly revealed cards. No later replay cards or results enter this node.</p>${node?`<p class="memory-scope">${learned.hands} earlier hands summarized · ${h.memoryStart?'compact session memory':'history window up to 200'} · ${step} current events observed</p><div class="belief-grid">${h.players.map(p=>{const key=playerKey(h,p),record=learned.profiles[key],rows=node.ranges[p.name],top=comboMass(rows).slice(0,12);return `<article class="belief-card"><h3>${esc(p.name)}</h3><p>${record?.hands||0} previous hands · ${record?.actions||0} actions · mean predictive loss ${record?.actions?(record.logLoss/record.actions).toFixed(3):'—'} nats</p><p>Continuous contextual behavior model · exact-combination range</p>${responseTable(node.responses[p.name])}<details><summary>Highest-weight surviving combinations</summary><p class="small-note">${p.name===h.hero?'Public hypothetical range; your actual cards are not supplied to the observer.':'Your hole cards and the public board block impossible combinations.'} Showing 12; export includes the full distribution.</p><table><thead><tr><th>Combination</th><th>Probability</th></tr></thead><tbody>${top.map(r=>`<tr><td>${esc(r.cards.join(' '))}</td><td>${pct(r.prob)}</td></tr>`).join('')}</tbody></table></details>${node.views[p.name]?`<h4>${esc(p.name)}’s modeled view of Hero</h4>${responseTable(node.views[p.name].model)}<p class="small-note">${learned.images[node.views[p.name].key]?.hands||0} earlier shared hands. This is an inferred public image, not direct knowledge of the opponent’s beliefs.</p>`:''}</article>`;}).join('')}</div><button class="button secondary" data-action="export-beliefs">Export weighted ranges & behavioral parameters</button>`:'<div class="ev-empty"><h3>See what each action taught the model</h3><p>Build the beliefs to inspect combination probabilities, continuous behavioral parameters and each player’s view of Hero.</p></div>'}<details open class="learning-objectives"><summary>Learning objective, play objective and constraints</summary><p><strong>Learn:</strong> fit contextual action logits and hand/board/price/range feature coefficients by posterior-weighted online predictive-loss gradients, and multiply the individual hand weights by the likelihood of each observed action, then normalize. Predictive loss is −log P(observed action), recorded before updating. Continuous coefficient means and approximate diagonal Gaussian precision update online. Four antithetic parameter samples approximate the predictive action distribution; these are integration samples, not four styles. Old evidence decays toward the prior with an eight-opportunity half-life per situation. Revealed hands are a selected sample; the reveal decision itself is not fitted.</p><p><strong>Play:</strong> coupled CFR trains both players’ strategies through the remaining streets in a sampled, restricted heads-up game. The case panel reports action values and frequencies under that same average strategy. Learned ranges initialize the solve. Learned responses provide initial and unvisited policies; CFR updates both players, so this is not a fixed-opponent best response. Earlier scenario models use separate heuristics.</p><p><strong>Constraints:</strong> probabilities sum to one; stacks, legal raises and action order are enforced; no duplicated cards; only own cards and public beliefs reach a player policy. Equity realization and later payments emerge from the sampled betting lines. Opponent ranges are factored, so multiway card/action correlations are not solved.</p><p>Coefficient uncertainty is an approximate diagonal online curvature estimate, not a calibrated confidence interval. Shown cards remove impossible holdings; this version does not retrospectively refit earlier action coefficients to the revealed hand. Bot hands use separate practice profiles and do not train imported players. Historical statistics remain available in Player memory.</p></details></section>`;
 }
 function practiceView(p,state,esc,money){
  const profile=state.playerProfiles?.find(x=>x.id===state.activePlayerId);
- if(!p)return `<section class="panel practice-intro"><span class="eyebrow">PLAY MONEY · HEADS-UP</span><h2>Practice against the shared policy</h2><p>Start with 100 BB at $0.05/$0.10. The bot uses its own cards, public actions and its evolving view of you. The same player ID keeps its recent memory across matches. Create a new player for a fresh start. Each bot style keeps its own observations of that player.</p><label>Player<select id="practice-player">${(state.playerProfiles||[]).map(x=>`<option value="${esc(x.id)}" ${x.id===state.activePlayerId?'selected':''}>${esc(x.name)} · ${esc(x.id.slice(-8))}</option>`).join('')}</select></label><p class="player-id">Player ID: <code>${esc(profile?.id||'')}</code></p><p>${profile?.memories?.[TYPES[state.practiceType].id]?.hands||0} earlier hands remembered with this bot style.</p><div class="field-grid"><label>New player name<input id="new-player-name" maxlength="30" value="${esc(state.newPlayerName||'')}" placeholder="e.g. Solus"></label><button class="button secondary" data-action="practice-player-new" ${state.loading?'disabled':''}>Create player</button></div><button class="text-button" data-action="practice-memory-reset" ${state.loading?'disabled':''}>Forget this player’s bot memory</button><p class="small-note">Use Save on this device or export a session to keep IDs and memory between visits. Names may match; IDs remain separate.</p><label>Bot style<select id="practice-type">${TYPES.map((t,i)=>`<option value="${i}" ${state.practiceType===i?'selected':''}>${t.label}</option>`).join('')}</select></label><button class="button primary" data-action="practice-start" ${state.loading?'disabled':''}>${state.loading?esc(state.rankProgress||'Preparing…'):'Deal a practice hand'}</button><p class="small-note">This is a local practice opponent, not a solved poker engine. Its cards remain hidden until showdown. Project saves contain the dealt deck so you can resume a hand.</p></section>`;
+ if(!p)return `<section class="panel practice-intro"><span class="eyebrow">PLAY MONEY · HEADS-UP</span><h2>Practice against the shared policy</h2><p>Start with 100 BB at $0.05/$0.10. The bot uses its own cards, public actions and its evolving view of you. The same player ID keeps its recent memory across matches. Create a new player for a fresh start. Legacy memory slots keep their saved observations; slot labels no longer constrain behavior.</p><label>Player<select id="practice-player">${(state.playerProfiles||[]).map(x=>`<option value="${esc(x.id)}" ${x.id===state.activePlayerId?'selected':''}>${esc(x.name)} · ${esc(x.id.slice(-8))}</option>`).join('')}</select></label><p class="player-id">Player ID: <code>${esc(profile?.id||'')}</code></p><p>${profile?.memories?.[TYPES[state.practiceType].id]?.hands||0} earlier hands remembered in this memory slot.</p><div class="field-grid"><label>New player name<input id="new-player-name" maxlength="30" value="${esc(state.newPlayerName||'')}" placeholder="e.g. Solus"></label><button class="button secondary" data-action="practice-player-new" ${state.loading?'disabled':''}>Create player</button></div><button class="text-button" data-action="practice-memory-reset" ${state.loading?'disabled':''}>Forget this player’s bot memory</button><p class="small-note">Use Save on this device or export a session to keep IDs and memory between visits. Names may match; IDs remain separate.</p><label>Saved memory slot (legacy labels)<select id="practice-type">${TYPES.map((t,i)=>`<option value="${i}" ${state.practiceType===i?'selected':''}>${t.label}</option>`).join('')}</select></label><button class="button primary" data-action="practice-start" ${state.loading?'disabled':''}>${state.loading?esc(state.rankProgress||'Preparing…'):'Deal a practice hand'}</button><p class="small-note">This is a local practice opponent, not a solved poker engine. Its cards remain hidden until showdown. Project saves contain the dealt deck so you can resume a hand.</p></section>`;
  const h=p.hand,s=snapshot(h,h.events.length),actions=h.live.actor===h.hero?legalActions(publicContext(h,h.events.length,h.hero)):[],table=tableView({players:s.players.map(v=>({...v,displayCards:v.known})),bb:h.bb,button:h.button,heroSeat:1,selectedSeat:1,pot:s.pot,board:s.board,actor:h.live.actor,phase:h.live.phase,handNumber:h.live.spec.handNumber},{esc,money}).replaceAll('data-action="live-seat"','data-action="practice-ignore"').replace('LIVE TABLE','PRACTICE TABLE').replace('Click a seat for player information','Bot cards stay hidden until showdown');
- return `<div class="practice-workspace"><div class="practice-main">${table}<section class="panel practice-actions"><h2>${h.live.complete?'Hand complete':h.live.actor===h.hero?'Your action':'Bot thinking'}</h2><p role="status">${esc(state.loading?state.rankProgress:p.lastAction)}${h.live.complete?' · Hero result '+bb(h.heroNet/100,h):''}</p><div class="practice-buttons">${actions.map(a=>`<button class="button ${a.kind==='bet'?'secondary':'primary'}" data-action="practice-act" data-value="${a.id}" ${state.loading?'disabled':''}>${esc(a.label)}</button>`).join('')}</div>${h.live.complete?`<button class="button primary" data-action="practice-next" ${s.players.some(p=>p.stack<=0)||state.loading?'disabled':''}>Next hand · rotate blinds</button><button class="button secondary" data-action="practice-review">Replay this hand</button><button class="text-button" data-action="practice-reset">New match · keep player memory</button>`:''}<div class="practice-learning" role="status"><strong>Live model updates</strong>${p.playerId?`<p class="player-id">${esc(p.playerName)} · <code>${esc(p.playerId)}</code></p>`:''}<p>${p.learning?.currentHeroActions||0} of your actions observed this hand · ${p.learning?.sharedHands||0} earlier hands summarized · ${p.learning?.pastHeroActions||0} earlier actions${p.learning?.heroRevealed?' · Your showdown cards observed':''}</p><p class="small-note">Recent actions update your range and the bot’s response model. Memory half-life: 8 opportunities per situation. Preflop decisions now use a coupled CFR solve through showdown, with a compact card and betting abstraction. Supported later decisions retain that plan. Fresh flop decisions jointly solve flop, turn and river betting with CFR. Fresh turn decisions solve turn through river. River decisions use CFR on a restricted betting game with your learned range. This is not a full Hold’em GTO solution.</p>${responseTable(p.responses?.[h.hero])}${riverDecisionView(p.lastDecision,h.live.complete)}${explorationView(p,state.loading,esc)}</div><p class="small-note">${TYPES[p.type].label} bot · 5% rake, $1 cap, no flop no drop. Chips and observed memory carry into the next hand.</p></section></div><aside class="panel practice-notes"><span class="eyebrow">A CONTROLLED TEST TABLE</span><h3>Play, inspect, adjust</h3><p>Use Compare top actions before acting to inspect estimated routes. Open Learning & image to see what the bot could infer from the public line.</p><p>The bot’s private cards and future deck are not passed to analysis or player policies. It is a client-side demo; saved projects include this private deal for resuming.</p><button class="text-button" data-action="view" data-value="learning">Inspect beliefs →</button></aside></div>${h.live.complete?'':treePanel(h,h.events.length,state,esc)}`;
+ return `<div class="practice-workspace"><div class="practice-main">${table}<section class="panel practice-actions"><h2>${h.live.complete?'Hand complete':h.live.actor===h.hero?'Your action':'Bot thinking'}</h2><p role="status">${esc(state.loading?state.rankProgress:p.lastAction)}${h.live.complete?' · Hero result '+bb(h.heroNet/100,h):''}</p><div class="practice-buttons">${actions.map(a=>`<button class="button ${a.kind==='bet'?'secondary':'primary'}" data-action="practice-act" data-value="${a.id}" ${state.loading?'disabled':''}>${esc(a.label)}</button>`).join('')}</div>${h.live.complete?`<button class="button primary" data-action="practice-next" ${s.players.some(p=>p.stack<=0)||state.loading?'disabled':''}>Next hand · rotate blinds</button><button class="button secondary" data-action="practice-review">Replay this hand</button><button class="text-button" data-action="practice-reset">New match · keep player memory</button>`:''}<div class="practice-learning" role="status"><strong>Live model updates</strong>${p.playerId?`<p class="player-id">${esc(p.playerName)} · <code>${esc(p.playerId)}</code></p>`:''}<p>${p.learning?.currentHeroActions||0} of your actions observed this hand · ${p.learning?.sharedHands||0} earlier hands summarized · ${p.learning?.pastHeroActions||0} earlier actions${p.learning?.heroRevealed?' · Your showdown cards observed':''}</p><p class="small-note">Recent actions update your range and the bot’s response model. Memory half-life: 8 opportunities per situation. All streets use individual-hand sampled CFR and exact board cards. Unvisited information sets use the continuous learned baseline. Sparse states are solved afresh; supported, sufficiently visited continuations can be reused. This is not a full Hold’em GTO solution.</p>${responseTable(p.responses?.[h.hero])}${riverDecisionView(p.lastDecision,h.live.complete)}${explorationView(p,state.loading,esc)}</div><p class="small-note">Memory slot: ${TYPES[p.type].label} · 5% rake, $1 cap, no flop no drop. Chips and observed memory carry into the next hand.</p></section></div><aside class="panel practice-notes"><span class="eyebrow">A CONTROLLED TEST TABLE</span><h3>Play, inspect, adjust</h3><p>Use Compare top actions before acting to inspect estimated routes. Open Learning & image to see what the bot could infer from the public line.</p><p>The bot’s private cards and future deck are not passed to analysis or player policies. It is a client-side demo; saved projects include this private deal for resuming.</p><button class="text-button" data-action="view" data-value="learning">Inspect beliefs →</button></aside></div>${h.live.complete?'':treePanel(h,h.events.length,state,esc)}`;
 }
 
 function riverDecisionView(d,complete){
  if(!d)return '';
+ if(d.engine==='exact-hand-cfr')return `<details class="response-fit" open><summary>Last bot decision · exact-hand sampled CFR${d.reused?' · retained continuation':''}</summary><p>${d.iterations.toLocaleString()} iterations · ${d.informationSets.toLocaleString()} information sets.</p>${complete?`<p>${d.rootUpdates} regret updates and ${d.averageVisits} average-strategy visits for the actual holding. Trained-policy mixture weight ${pct(d.trainedPolicyWeight)}; the remainder is the learned baseline. ${d.averageVisits<20?'Low coverage: this policy is provisional.':''}</p><table><thead><tr><th>Action</th><th>Played frequency</th></tr></thead><tbody>${d.policy.map(a=>`<tr><td>${a.label}</td><td>${pct(a.prob)}</td></tr>`).join('')}</tbody></table><button class="button secondary" data-action="practice-export-cfr">Export decision</button>`:'<p>Hand-specific frequencies and coverage are hidden until the hand ends.</p>'}<p class="small-note">${d.scope}</p></details>`;
+ if(d.engine==='hand-specific-all-in')return `<details class="response-fit" open><summary>Last bot decision · hand-specific all-in equity</summary><p>The bot evaluated its exact cards against an action-conditioned opponent range. ${d.exact?'Remaining boards enumerated.':'Legal future boards sampled.'}</p>${complete?`<p>Equity ${pct(d.equity)} · required ${pct(d.breakEven)} · ${d.conditioning.source}</p><button class="button secondary" data-action="practice-export-cfr">Export decision</button>`:'<p>Hand-specific results are hidden until the hand ends.</p>'}</details>`;
  if(!['river-cfr','turn-river-cfr','flop-river-cfr','preflop-river-cfr'].includes(d.engine))return '<p class="small-note">Last bot decision: adaptive EV rollouts. Selection uses EV minus an uncertainty adjustment, with the full conditional bet-sizing prior. Sparse large bets receive an exposure floor; this is a conservative heuristic, not a statistical confidence bound.</p>';
- return `<details class="response-fit" open><summary>Last bot decision · ${d.engine==='preflop-river-cfr'?'Preflop → river CFR':d.engine==='flop-river-cfr'?'Flop → river CFR':d.engine==='turn-river-cfr'?'Turn → river CFR':'River CFR'}${d.reused?' · retained continuation':''}</summary><p>${d.iterations.toLocaleString()} training iterations · ${d.flopGroups?d.flopGroups+' flop groups · ':''}${d.runouts?d.runouts+' sampled runouts per pair · '+d.turnGroups+' turn groups · ':''}${d.riverGroups?d.riverGroups+' river texture groups · ':''}${d.samples.toLocaleString()} compatible range pairs · 6 strength buckets per player.</p><p>Restricted-game best-response improvements: bot ${d.improvements[0].toFixed(4)} BB; player ${d.improvements[1].toFixed(4)} BB. Total gap: <strong>${d.nashConv.toFixed(4)} BB</strong>.</p>${complete?`<table><thead><tr><th>Bot action</th><th>Played policy frequency</th></tr></thead><tbody>${d.policy.map(a=>`<tr><td>${a.label}</td><td>${pct(a.prob)}</td></tr>`).join('')}</tbody></table><button class="button secondary" data-action="practice-export-cfr">Export CFR decision</button>`:'<p class="small-note">Hand-specific action frequencies become visible when the hand ends.</p>'}${d.replanReason?`<p class="small-note">${d.replanReason}</p>`:''}<p class="small-note">Computed before the displayed action. Original solve root includes every legal size in our action menu. Later sizes are restricted: ${d.preflopWagers?d.preflopWagers+' new preflop bets/raises from the solve root, then ':''}${d.maxWagers||2} new bet/raise per postflop street. ${d.engine==='preflop-river-cfr'?'Preflop values include sampled five-card runouts and betting through showdown. Six unequal preflop strength buckets are retained throughout; exact hand improvements within a bucket are not distinguished. Flops use paired, suited, high-rainbow and low-rainbow groups; later cards use paired-or-suited versus other. Future bets use approximately 3× preflop or 75% pot postflop, plus maximum.':d.engine==='flop-river-cfr'?'Flop values include sampled turn and river cards and solved betting on both streets. Public cards are grouped as paired, suited, overcard or other, in that priority order. The original flop hand bucket is retained across streets.':d.engine==='turn-river-cfr'?'Turn values include river-card chances and solved river responses; all legal river cards are integrated into texture groups. The original turn hand bucket is retained.':''} Range pairs are sampled and holdings grouped into six strength buckets; preflop/flop/turn buckets use a heuristic. The gap is exact within that sampled abstraction, not an exploitability bound for full Hold’em. Rake is included, so standard zero-sum CFR convergence is not guaranteed. This solve uses learned ranges; it does not directly fit or exploit your learned response coefficients. Supported actions follow the retained strategy, with bounded exploration when enabled. Joint bucket beliefs use the exact adjusted action policy. The reported gap includes the current adjustment, while continuations remain frozen. An unsupported action starts a new solve. Reloading also starts a new solve; the plan itself is not saved. Independent observational memory still uses the learned response model. No full-game safety guarantee is claimed.</p></details>`;
+ return `<details class="response-fit" open><summary>Last bot decision · ${d.engine==='preflop-river-cfr'?'Preflop → river CFR':d.engine==='flop-river-cfr'?'Flop → river CFR':d.engine==='turn-river-cfr'?'Turn → river CFR':'River CFR'}${d.reused?' · retained continuation':''}</summary><p>${d.iterations.toLocaleString()} training iterations · ${d.flopGroups?d.flopGroups+' flop groups · ':''}${d.runouts?d.runouts+' sampled runouts per pair · '+d.turnGroups+' turn groups · ':''}${d.riverGroups?d.riverGroups+' river texture groups · ':''}${d.samples.toLocaleString()} compatible range pairs · 6 strength buckets per player.</p><p>Restricted-game best-response improvements: bot ${d.improvements[0].toFixed(4)} BB; player ${d.improvements[1].toFixed(4)} BB. Total gap: <strong>${d.nashConv.toFixed(4)} BB</strong>.</p>${complete?`<table><thead><tr><th>Bot action</th><th>Played policy frequency</th></tr></thead><tbody>${d.policy.map(a=>`<tr><td>${a.label}</td><td>${pct(a.prob)}</td></tr>`).join('')}</tbody></table><button class="button secondary" data-action="practice-export-cfr">Export CFR decision</button>`:'<p class="small-note">Hand-specific action frequencies become visible when the hand ends.</p>'}${d.replanReason?`<p class="small-note">${d.replanReason}</p>`:''}<p class="small-note">Computed before the displayed action. Original solve root includes every legal size in our action menu. Later sizes are restricted: ${d.preflopWagers?d.preflopWagers+' new preflop bets/raises from the solve root, then ':''}${d.maxWagers||2} new bet/raise per postflop street. ${d.engine==='preflop-river-cfr'?'Preflop values include sampled five-card runouts and betting through showdown. Six unequal preflop strength buckets are retained throughout; exact hand improvements within a bucket are not distinguished. Flops use paired, suited, high-rainbow and low-rainbow groups; later cards use paired-or-suited versus other. Future bets use approximately 3× preflop or 75% pot postflop, plus maximum.':d.engine==='flop-river-cfr'?'Flop values include sampled turn and river cards and solved betting on both streets. Public cards are grouped as paired, suited, overcard or other, in that priority order. The original flop hand bucket is retained across streets.':d.engine==='turn-river-cfr'?'Turn values include river-card chances and solved river responses; all legal river cards are integrated into texture groups. The original turn hand bucket is retained.':''} Range pairs are sampled and holdings grouped into six strength buckets; preflop/flop/turn buckets use a heuristic. The gap is exact within that sampled abstraction, not an exploitability bound for full Hold’em. Rake is included, so standard zero-sum CFR convergence is not guaranteed. This solve uses learned ranges; it does not directly fit or exploit your learned response coefficients. Supported actions follow the retained strategy, with bounded exploration when enabled. Joint bucket beliefs use the exact adjusted action policy. The reported gap includes the current adjustment, while continuations remain frozen. An unsupported action starts a new solve. Reloading also starts a new solve; the plan itself is not saved. Recorded bot action likelihoods also update the combination-level observational range; unrecorded player actions use the learned response model. All-in responses use hand-specific equity against an action-conditioned range. No full-game safety guarantee is claimed.</p></details>`;
 }
 
 function explorationView(p,loading,esc){
- const m=p.exploration;if(!m)return '';const rows=Object.entries(m.contexts),last=p.lastDecision?.exploration||m.last,complete=p.hand.live.complete;
- return `<details class="response-fit" open><summary>Opponent hypotheses & exploration budget</summary><label class="check-label"><input id="exploration-enabled" type="checkbox" ${m.enabled?'checked':''} ${loading?'disabled':''}>Allow budgeted exploration</label><label>Expected further hands with this player <input id="exploration-horizon" type="number" min="0" max="1000" step="1" value="${m.horizon}" ${loading?'disabled':''}></label><p><strong>${m.remaining.toFixed(4)} BB</strong> estimated EV budget remaining · ${m.spent.toFixed(4)} BB spent · ${m.handSpent.toFixed(4)} BB this hand · ${m.probes} policy probes.</p><p>${m.observations} supported responses scored · ${m.skipped} unsupported responses skipped.</p>${rows.length?`<div class="table-scroll"><table><thead><tr><th>Facing a bet</th>${HYPOTHESES.map(t=>`<th>${t}</th>`).join('')}<th>Responses</th><th>Predictive loss / CFR-like</th></tr></thead><tbody>${rows.map(([key,c])=>`<tr><th>${esc(key)}</th>${c.weights.map(w=>`<td>${pct(w)}</td>`).join('')}<td>${c.n}</td><td>${(c.loss/c.n).toFixed(3)} / ${(c.baselineLoss/c.n).toFixed(3)}</td></tr>`).join('')}</tbody></table></div>`:'<p>Initial probability: 33.3% each for continues more, CFR-like, and folds more. No supported postflop response observed yet.</p>'}${complete&&last?`<p>${esc(last.reason)}${last.active?`: ${esc(last.target)} · added mixture ${(100*last.mix).toFixed(1)}% · estimated EV charge ${last.costBB.toFixed(5)} BB · expected extra information ${last.gain.toFixed(5)} nats`:''}.</p>`:'<p class="small-note">The hand-specific probe and its estimated cost are shown after the hand.</p>'}<p class="small-note">Limits: 0.25 BB total per player/style, 0.05 BB per hand, 0.02 BB per decision. No automatic refill. Candidate action EV must be within 0.05 BB of the best frozen-CFR continuation. At most 5% is mixed toward a probe; less when fewer than 20 further hands are expected, zero at 0. Probe wagers exclude all-ins and cannot exceed one pot or 10% of the current stack. These are estimated EV limits, not a cap on actual losses.</p><p class="small-note">Hypotheses tilt fold odds around the opponent’s CFR response, integrating hidden hand buckets. Probabilities are approximate model beliefs, not calibrated confidence. Predictive loss is scored before updating; lower is better. A 2% drift toward the prior permits strategy changes. Cards and hypotheses are factorized anew at each response. Information is a one-response proxy, not proven future profit; opponent continuations stay frozen after our small policy adjustment. Preflop is not explored. This is experimental information-directed exploration, not reward-trained RL.</p></details>`;
+ const m=p.exploration;if(!m)return '';const last=m.last,rows=Object.entries(m.contexts);
+ return `<details class="response-fit" open><summary>Opponent hypotheses & exploration budget</summary><label class="check-label"><input id="exploration-enabled" type="checkbox" ${m.enabled?'checked':''} ${loading?'disabled':''}>Allow budgeted exploration</label><label>Expected further hands with this player <input id="exploration-horizon" type="number" min="0" max="1000" step="1" value="${m.horizon}" ${loading?'disabled':''}></label><p>${m.remaining.toFixed(4)} BB estimated EV budget remaining · ${m.spent.toFixed(4)} BB charged · ${m.handSpent.toFixed(4)} BB this hand · ${m.probes} policy probes.</p><p>${m.observations} responses scored · ${m.skipped} unsupported responses skipped.</p>${last?`<p>${esc(last.reason)}${last.active?` · ${esc(last.target)} · mixture ${(100*last.mix).toFixed(3)}% · estimated charge ${last.costBB.toFixed(5)} BB`:''}.</p>${last.pricing?`<p>Public-range average probe cost before mixing: ${last.pricing.mean.toFixed(4)} ± ${(2*last.pricing.se).toFixed(4)} BB (two MC standard errors; ${last.pricing.samples} paired continuations). Charge uses the positive upper estimate × mixture weight. Baseline-only continuation lookups: ${pct(last.pricing.fallbackRate)}.</p>`:''}`:'<p>Probes are available on postflop decisions with a legal small bet and an informative response.</p>'}<p class="small-note">Limits: 0.25 BB total, 0.05 BB per hand and 0.02 BB per decision in estimated public-range-average EV cost. Mixture is at most 5%, reduced by the remaining budget, sampling uncertainty and expected further hands. Probe wagers exclude all-ins and cannot exceed one pot or 10% of the stack. The estimate does not bound actual losses or every individual hand’s EV. Model error is not covered by the MC margin.</p><p class="small-note">Local response hypotheses tilt fold odds toward “continues more”, “current policy”, or “folds more”. They are diagnostic alternatives around exact-hand responses, not player-style categories. The main behavior learner still uses continuous parameters. Information gain is a one-response approximation with frozen response kernels, not guaranteed future profit. Existing budgets are preserved without automatic refill.</p>${rows.length?`<div class="table-scroll"><table><thead><tr><th>Situation</th><th>Continues more</th><th>Current policy</th><th>Folds more</th><th>Observations</th></tr></thead><tbody>${rows.map(([key,c])=>`<tr><td>${esc(key)}</td>${c.weights.map(w=>`<td>${pct(w)}</td>`).join('')}<td>${c.n}</td></tr>`).join('')}</tbody></table></div>`:''}</details>`;
 }
 
 return {engineControl,treePanel,learningView,practiceView};
@@ -2057,7 +2359,7 @@ const {RANKS,CLASSES,parseHistory,memory,snapshot,decisionIndices,rangeAt,prior,
 const {createLiveHand,restoreLiveHand,appendLiveAction,undoLiveAction,livePots}=__live;
 const {defaultLiveSetup,liveSetupView,liveControlsView,visualLiveView,playerCatalog,looseCards,formatStackBB,stackInputDollars}=__liveUI;
 const {TYPES,publicContext,legalActions}=__policy;
-const {learnMemoryAsync,learnMemory,nodeBeliefs,comboMass,typeMass,freshMemory,completeMemory,restoreMemory}=__learning;
+const {learnMemoryAsync,learnMemory,nodeBeliefs,comboMass,typeMass,freshMemory,completeMemory,restoreMemory,restoreActionEvidence}=__learning;
 const {treeAvailability}=__tree;
 const {analyzeCfr}=__riverCfr;
 const {newPractice,advancePracticeAdaptive,practiceSave,practiceRestore}=__practice;
@@ -2083,7 +2385,7 @@ function rangeKey(name){const h=hand(),p=h.players.find(p=>p.name===name);return
 function weights(name){const key=rangeKey(name);if(!Object.hasOwn(state.priors,key))Object.defineProperty(state.priors,key,{value:Object.hasOwn(state.priors,name)?structuredClone(state.priors[name]):prior('all'),writable:true,enumerable:true,configurable:true});return state.priors[key];}
 function currentRange(){return rangeAt(hand(),state.step,state.target,weights(state.target),state.line,state.target===hand().hero,state.config);}
 function toast(message){state.notice=message;render();}
-function header(){return `<header class="topbar"><a class="brand" href="#" data-action="home"><span class="brand-mark">R<span>╱</span></span><span>RANGE<span class="brand-light">LAB</span></span></a><span class="prototype">OFFLINE CASH GAME WORKSPACE <b>v0.20.0</b></span><div class="header-actions"><button class="button secondary" data-action="kuhn-open">Equilibrium lab</button><button class="button secondary" data-action="practice-open">Play a bot</button><button class="button secondary" data-action="live-new">+ Live hand</button><button class="button secondary" data-action="export-project">${icons.download} Export project</button><button class="button secondary" data-action="export-compact">Export compact session</button><button class="button primary" data-action="import">${icons.upload} Import history</button><input type="file" id="import-files" accept=".txt,.json,text/plain,application/json" multiple hidden></div></header>`;}
+function header(){return `<header class="topbar"><a class="brand" href="#" data-action="home"><span class="brand-mark">R<span>╱</span></span><span>RANGE<span class="brand-light">LAB</span></span></a><span class="prototype">OFFLINE CASH GAME WORKSPACE <b>v0.23.0</b></span><div class="header-actions"><button class="button secondary" data-action="kuhn-open">Equilibrium lab</button><button class="button secondary" data-action="practice-open">Play a bot</button><button class="button secondary" data-action="live-new">+ Live hand</button><button class="button secondary" data-action="export-project">${icons.download} Export project</button><button class="button secondary" data-action="export-compact">Export compact session</button><button class="button primary" data-action="import">${icons.upload} Import history</button><input type="file" id="import-files" accept=".txt,.json,text/plain,application/json" multiple hidden></div></header>`;}
 function sidebar(){
  const shown=state.hands.filter(h=>(state.filter==='all'||state.filter==='played'&&h.vpip||state.filter==='showdown'&&h.showdown)&&(!state.search||[h.id,h.heroCards,h.date,...h.players.map(p=>p.name)].join(' ').toLowerCase().includes(state.search.toLowerCase())));
  const net=state.hands.reduce((a,h)=>a+h.heroNet,0);
@@ -2121,7 +2423,7 @@ function evPanel(h,s){
 function topActionsPanel(h,s){
  if(state.config.engine==='belief')return treePanel(h,state.step,state,esc);
  let reason='',decision;try{decision=evDecision(h,state.step);}catch(e){reason=e.message;}
- const ranked=state.ranking?.model==='coupled-cfr'?null:state.ranking;
+ const ranked=['exact-hand-cfr','coupled-cfr','hand-specific-all-in'].includes(state.ranking?.model)?null:state.ranking;
  return `<section class="panel top-actions" aria-label="Top 5 EV actions"><div class="section-title"><div><span class="eyebrow">${h.live&&state.step===h.events.length?'LIVE DECISION':'REPLAY DECISION'}</span><h2>Top 5 EV actions</h2></div><span class="tag">Estimated · ${s.street==='Preflop'?'preflop, up to 6 players':'heads-up postflop'}</span></div>${engineControl(state.config.engine)}${s.street==='Preflop'?preflopOverview(h,s,decision):postflopControls()}<div class="ranking-toolbar"><p class="small-note">${reason?esc(reason):`Hero vs ${decision.preflop?decision.opponents.length+' opponents':esc(decision.villain.name)} · ${s.street} · ${formatStackBB(s.pot,h.bb)} pot. Compare check/call, fold when facing a bet, and legal wager sizes.`}</p><button class="button primary" data-action="rank-actions" ${reason||state.loading?'disabled':''}>${state.loading?(state.rankProgress||'Calculating…'):ranked?'Recalculate top actions':'Compare top actions'}</button></div>${ranked?`<p class="ranking-context">Best ${ranked.actions.length} of ${ranked.tested} tested actions · ${ranked.iterations.toLocaleString()} ${ranked.model==='postflop-range'?'seeded runouts per branch':'shared deals per size'} · raw equity ${pct(ranked.equity)}</p><ol class="ranked-actions">${ranked.actions.map(a=>`<li><details class="ranked-action" ${a.rank===1?'open':''}><summary><span class="rank-number">${a.rank}</span><span class="rank-label"><b>${esc(a.label)}</b><small>${esc(a.detail)}</small></span><span class="rank-ev ${a.ev>=0?'positive':'negative'}"><b>${signed(a.ev)}</b><small>${(a.ev*100/h.bb).toFixed(2)} BB EV</small></span><span class="rank-gap">${a.rank===1?'Best tested':dollar(a.gap)+' below best'}<small>View routes</small></span></summary><div class="rank-routes">${a.mix?`<p class="small-note">${ranked.preflop?'Field response:':'Opponent now:'} ${pct(a.mix.fold)} ${ranked.preflop?'everyone folds':'fold'} · ${pct(a.mix.call)} ${ranked.preflop?'continue without raising':'call'} · ${pct(a.mix.raise)} ${ranked.preflop&&ranked.model==='cash'?'raise (Hero may call)':ranked.preflop?'raise → Hero folds':'raise'}</p>`:''}${responseRangeView(a,a.id)}<div class="ranking-route-head"><span>Route / probability</span><span>Net payoff</span><span>EV contribution</span></div>${a.routes.map(r=>`<div class="ranking-route"><span>${esc(r.name)}<small>${pct(r.p)}</small></span><b>${signed(r.payoff)}</b><b class="${r.contribution>=0?'positive':'negative'}">${signed(r.contribution)}</b></div>`).join('')}<div class="route-total"><span>Probability total ${pct(a.routes.reduce((n,r)=>n+r.p,0))}</span><b>EV ${signed(a.ev)}</b></div></div></details></li>`).join('')}</ol>${ranked.tested<5?'<p class="small-note">Fewer than five distinct legal actions are available. Equivalent sizes are counted once.</p>':''}`:`<p class="ranking-empty">${s.street==='Preflop'?'Compare fold, limp/call/check, 2–4 BB opens, 2.5–4× re-raises, pot-based sizes, custom and effective-stack wagers.':'Compare minimum, ⅓, ½, ¾, pot, 1½-pot, custom and effective-stack wagers.'} Stack limits and duplicate sizes are handled automatically.</p>`}<p class="small-note ranking-scope">Best among tested sizes under your assumptions, not a solved strategy. ${s.street==='Preflop'&&state.config.preflopModel==='cash'?'Cash-baseline responses depend on position, size, pot odds, effective stack and the chosen tendency. These are explicit heuristics, not measured pool frequencies or GTO.':s.street!=='Preflop'&&state.config.postflopModel==='range'?'Fold/call/raise ranges depend on each combination’s equity against the assumed Hero betting range and the price offered.':'Legacy model: fixed bucket responses can distort bet sizing.'} ${s.street==='Preflop'?(state.config.preflopModel==='cash'?'One further preflop raise is modeled, followed by fold/call decisions for Hero and the remaining players. Continuing hands check down; later raises and postflop strategy are omitted.':'Players still owed action may fold, call or raise; then the hand checks down. Hero folds to any raise while holding chips. Once Hero is all-in, others make one call/fold decision with no further side-pot betting.'):state.config.postflopModel==='range'?'One further raise is modeled; Hero may fold or call against the raising range. Then both players check down. Future betting and equity denial from later bets are omitted.':`Calls check down${state.config.futureMin>=0?' unless the selected turn-to-river rule applies':''}; Hero folds to a re-raise.`} EV is net from this decision, after estimated fees; prior contributions are sunk. Small EV gaps may be simulation noise.</p><button class="text-button" data-action="view" data-value="ranges">Edit ranges, response rates, sizes & fees →</button></section>`;
 }
 function postflopControls(){return `<div class="postflop-controls"><label>Postflop model<select id="postflop-model"><option value="range" ${state.config.postflopModel==='range'?'selected':''}>Range-conditioned responses</option><option value="manual" ${state.config.postflopModel==='manual'?'selected':''}>Fixed bucket weights (legacy)</option></select></label>${state.config.postflopModel==='range'?`<label>Assumed bluff:value multiplier<select id="postflop-bluffs">${[[0,'0 · no bluffs'],[.25,'0.25 · fewer bluffs'],[.5,'0.5 · default assumption'],[1,'1 · more bluffs']].map(([v,l])=>`<option value="${v}" ${state.config.postflopBluffFactor===v?'selected':''}>${l}</option>`).join('')}${![0,.25,.5,1].includes(state.config.postflopBluffFactor)?`<option selected value="${state.config.postflopBluffFactor}">${state.config.postflopBluffFactor} · imported assumption</option>`:''}</select></label><label class="check-label"><input type="checkbox" id="postflop-mix" ${state.config.postflopUseMix?'checked':''}>Use my edited Hero betting mix</label><p class="small-note">Check/call assumes checkdown. Bet/raise allows one further raise, then checkdown. Opponent bets after your check and future-street betting are omitted. These policies are assumptions. The bluff:value ratio is multiplier × bet / (pot + bet), subject to available combinations.</p>`:'<p class="baseline-disclosure">Legacy weights do not adjust to sizing and can overvalue all-in or minimum bets.</p>'}</div>`;}
@@ -2224,7 +2526,7 @@ function handleLive(action,value){
 }
 
 function download(name,content,type='text/plain'){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function projectData(){return {format:'range-lab',version:3,playerProfiles:state.playerProfiles,activePlayerId:state.activePlayerId,hands:state.hands.map(h=>h.live?{practice:!!h.practice,memoryStart:h.memoryStart,live:{spec:h.live.spec,commands:h.live.commands}}:{raw:h.raw,source:h.source}),practice:practiceSave(state.practice),handId:state.handId,step:state.step,priors:state.priors,mix:state.mix,config:state.config,line:state.line};}
+function projectData(){return {format:'range-lab',version:3,playerProfiles:state.playerProfiles,activePlayerId:state.activePlayerId,hands:state.hands.map(h=>h.live?{practice:!!h.practice,memoryStart:h.memoryStart,actionEvidence:h.actionEvidence||{},live:{spec:h.live.spec,commands:h.live.commands}}:{raw:h.raw,source:h.source}),practice:practiceSave(state.practice),handId:state.handId,step:state.step,priors:state.priors,mix:state.mix,config:state.config,line:state.line};}
 function exportCompact(){const h=hand();if(!h){toast('Start a hand first.');return;}const p=projectData();p.hands=p.hands.filter(x=>x.live?.spec.id===h.id);if(!h.live){toast('Compact export is available for live tables and practice.');return;}p.hands[0].memoryStart=h.memoryStart||learnMemory(state.hands,h);if(p.practice?.spec.id!==h.id)p.practice=null;p.playerProfiles=p.practice?p.playerProfiles.filter(x=>x.id===p.practice.playerId):[];p.activePlayerId=p.practice?.playerId||'';download('range-lab-session.json',JSON.stringify(p,null,2),'application/json');}
 function exportProject(){download('range-lab-project.json',JSON.stringify(projectData(),null,2),'application/json');}
 let savedLocal='';
@@ -2235,14 +2537,14 @@ async function sample(){try{const text="Poker Hand #HD145438339: Hold'em No Limi
 function finite(n,min,max,fallback){return typeof n==='number'&&Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;}
 function cleanMap(map,fallback=0){const out={};for(const c of CLASSES)out[c]=finite(map?.[c],0,100,fallback);return out;}
 async function importFiles(files){
- const previous=structuredClone(state);state.restoring=true;
+ const savedPlan=state.practice?.cfrPlan,previous=structuredClone({...state,practice:state.practice?{...state.practice,cfrPlan:undefined}:null,practicePreview:null});if(previous.practice)previous.practice.cfrPlan=savedPlan;state.restoring=true;
  try{
   const list=[...files];if(!list.length)return;if(list.reduce((s,f)=>s+f.size,0)>25_000_000)throw Error('Import up to 25 MB at a time.');
   if(list.length===1&&list[0].name.endsWith('.json')){
    const p=JSON.parse(await list[0].text());if(p.format!=='range-lab'||![1,2,3].includes(p.version)||!Array.isArray(p.hands)||p.hands.length>20000)throw Error('This is not a supported Range Lab project.');
    if(!p.hands.length){const profiles=restorePlayers(p.playerProfiles||[]);if(!profiles.length)throw Error('The project has no hands or player profiles.');state.playerProfiles=profiles;state.activePlayerId=profiles.some(x=>x.id===p.activePlayerId)?p.activePlayerId:profiles[0].id;state.hands=[];state.practice=null;state.handId='';state.view='practice';state.liveSetup=false;state.notice='Player profiles restored.';render();return;}
-   const parsed=p.hands.map(h=>h.live?[Object.assign(restoreLiveHand(h.live.spec,h.live.commands),{practice:h.practice===true,...(h.memoryStart?{memoryStart:restoreMemory(h.memoryStart)}:{})})]:parseHistory(h.raw,String(h.source||'Project')).hands).flat();if(!parsed.length)throw Error('The project contains no valid hands.');setDataset(parsed,list[0].name);
-   state.config.engine=p.config?.engine==='legacy'?'legacy':'belief';state.config.treeSamples=[200,600,2000].includes(p.config?.treeSamples)?p.config.treeSamples:200;if(p.practice){state.practice=practiceRestore(p.practice,state.hands);state.hands=state.hands.map(h=>h.id===state.practice.hand.id?state.practice.hand:h);if(!state.hands.some(h=>h.id===state.practice.hand.id))state.hands.unshift(state.practice.hand);}
+   const parsed=p.hands.map(h=>{if(!h.live)return parseHistory(h.raw,String(h.source||'Project')).hands;const restored=Object.assign(restoreLiveHand(h.live.spec,h.live.commands),{practice:h.practice===true,...(h.memoryStart?{memoryStart:restoreMemory(h.memoryStart)}:{})});restored.actionEvidence=restoreActionEvidence(h.actionEvidence,restored);return [restored];}).flat();if(!parsed.length)throw Error('The project contains no valid hands.');setDataset(parsed,list[0].name);
+   state.config.cfrIterations=[150,600,2000,8000].includes(p.config?.cfrIterations)?p.config.cfrIterations:0;state.config.engine=p.config?.engine==='legacy'?'legacy':'belief';state.config.treeSamples=[200,600,2000].includes(p.config?.treeSamples)?p.config.treeSamples:200;if(p.practice){state.practice=practiceRestore(p.practice,state.hands);state.hands=state.hands.map(h=>h.id===state.practice.hand.id?state.practice.hand:h);if(!state.hands.some(h=>h.id===state.practice.hand.id))state.hands.unshift(state.practice.hand);}
    const incoming=restorePlayers(p.playerProfiles||[]);state.playerProfiles=[...state.playerProfiles.filter(x=>!incoming.some(y=>y.id===x.id)),...incoming];if(state.playerProfiles.length>100)throw Error('Too many player profiles.');state.activePlayerId=incoming.some(x=>x.id===p.activePlayerId)?p.activePlayerId:state.activePlayerId;adoptPracticePlayer();
    state.priors=Object.fromEntries(Object.entries(p.priors||{}).filter(([k])=>k!=='__proto__').map(([k,v])=>[k,cleanMap(v)]));state.mix=cleanMap(p.mix,50);state.config.iterations=p.config?.iterations===20000?20000:5000;state.config.preflopModel=p.config?.preflopModel==='manual'?'manual':'cash';state.config.postflopModel=p.config?.postflopModel==='manual'?'manual':'range';state.config.postflopBluffFactor=finite(p.config?.postflopBluffFactor,0,1,.5);state.config.postflopUseMix=p.config?.postflopUseMix===true;state.config.populationTightness=finite(p.config?.populationTightness,-.08,.08,0);state.line=p.line!==false;
    for(const [k,min,max] of [['betTo',0,1000000],['rakePct',0,20],['rakeCap',0,1000000],['extraFee',0,1000000],['futureBet',0,1000000],['futureMin',-1,8]])state.config[k]=finite(p.config?.[k],min,max,state.config[k]);
@@ -2262,7 +2564,7 @@ async function calculateLearning(beliefsOnly=false){
   if(!beliefsOnly){const reason=treeAvailability(h,step);if(reason)throw Error(reason);}
   await learnMemoryAsync(state.hands,h,progress,cancel);if(cancel())return;
   if(beliefsOnly){state.beliefNode=nodeBeliefs(state.hands,h,step,state.priors);state.view='learning';}
-  else {const config=state.practice?.hand.id===h.id?{...state.config,...state.practice.config}:state.config;const ranking=await analyzeCfr({hands:state.hands,hand:h,step,priors:structuredClone(state.priors),config:structuredClone(config),iterations:state.config.treeSamples,onProgress:progress,cancel});if(cancel())return;state.ranking=ranking;}
+  else {const config=state.practice?.hand.id===h.id?{...state.config,...state.practice.config}:state.config;const ranking=await analyzeCfr({hands:state.hands,hand:h,step,priors:structuredClone(state.priors),config:structuredClone(config),solveOptions:state.config.cfrIterations?{iterations:state.config.cfrIterations}:{},onProgress:progress,cancel});if(cancel())return;state.ranking=ranking;}
   state.notice='';
  }catch(e){if(!cancel())state.notice=e.message;}
  finally{if(!cancel()){state.loading=false;state.rankProgress='';render();}}
@@ -2286,7 +2588,7 @@ async function handlePractice(action,value){
   if(action==='practice-reset'){if(state.practice&&!state.practice.hand.live.complete)throw Error('Finish this practice hand before starting a new match.');if(state.practice){adoptPracticePlayer();state.practiceType=state.practice.type;}state.practice=null;state.view='practice';invalidate();render();return;}
   if(action==='practice-player-new'){if(state.practice)throw Error('Open a new match to switch players.');if(state.playerProfiles.length>=100)throw Error('Up to 100 player profiles are supported.');const profile=createPlayer(state.newPlayerName);state.playerProfiles.push(profile);state.activePlayerId=profile.id;state.newPlayerName='';state.notice='New player ID created with fresh memory.';render();return;}
   if(action==='practice-memory-reset'){if(state.practice)throw Error('Open the match setup before forgetting memory.');const profile=activePlayer();profile.memories={};profile.lastHands={};profile.explorations={};state.notice='This player’s bot memory was cleared. The player ID is unchanged.';render();return;}
-  if(action==='practice-export-cfr'){if(state.practice?.hand.live.complete&&['river-cfr','turn-river-cfr','flop-river-cfr','preflop-river-cfr'].includes(state.practice.lastDecision?.engine))download('range-lab-cfr-decision.json',JSON.stringify({hand:state.practice.hand.id,...state.practice.lastDecision},null,2),'application/json');return;}
+  if(action==='practice-export-cfr'){if(state.practice?.hand.live.complete&&['exact-hand-cfr','river-cfr','turn-river-cfr','flop-river-cfr','preflop-river-cfr','hand-specific-all-in'].includes(state.practice.lastDecision?.engine))download('range-lab-cfr-decision.json',JSON.stringify({hand:state.practice.hand.id,...state.practice.lastDecision},null,2),'application/json');return;}
   if(action==='practice-review'){state.handId=state.practice.hand.id;state.step=decisionIndices(state.practice.hand)[0]??0;state.view='replay';nodeSetup();render();return;}
   if(action==='practice-start'||action==='practice-next'){
    const previous=action==='practice-next'?state.practice:null;if(action==='practice-start'&&state.practice&&!state.practice.hand.live.complete)throw Error('Resume your current practice hand.');
@@ -2297,13 +2599,13 @@ async function handlePractice(action,value){
    state.practicePreview=candidate;state.view='practice';state.rankProgress='Cards dealt · bot preparing its decision…';render();
    // Let the dealt table paint before the synchronous CFR game construction.
    await new Promise(resolve=>setTimeout(resolve,20));if(request!==calculationVersion)return;
-   await advancePracticeAdaptive(candidate,null,Math.random,message=>{if(request===calculationVersion){state.rankProgress=message;render();}},()=>request!==calculationVersion);if(request!==calculationVersion)return;
+   candidate.config.cfrIterations=state.config.cfrIterations||0;await advancePracticeAdaptive(candidate,null,Math.random,message=>{if(request===calculationVersion){state.rankProgress=message;render();}},()=>request!==calculationVersion);if(request!==calculationVersion)return;
    state.practicePreview=null;state.practice=candidate;
    state.hands.unshift(state.practice.hand);
   }else if(action==='practice-act'){
    const original=state.practice;if(!original)throw Error('Start a practice match.');const choices=legalActions(publicContext(original.hand,original.hand.events.length,original.hand.hero)),choice=choices.find(a=>a.id===value);if(!choice)throw Error('Choose an available action.');
    const request=++calculationVersion,p=practiceRestore(practiceSave(original),state.hands);p.cfrPlan=original.cfrPlan?{...original.cfrPlan}:undefined;p.planStatus=original.planStatus;p.lastDecision=original.lastDecision?structuredClone(original.lastDecision):undefined;state.loading=true;state.rankProgress='Updating your response model…';render();
-   await advancePracticeAdaptive(p,{kind:choice.kind,to:choice.to},Math.random,message=>{if(request===calculationVersion){state.rankProgress=message;render();}},()=>request!==calculationVersion);if(request!==calculationVersion)return;
+   p.config.cfrIterations=state.config.cfrIterations||0;await advancePracticeAdaptive(p,{kind:choice.kind,to:choice.to},Math.random,message=>{if(request===calculationVersion){state.rankProgress=message;render();}},()=>request!==calculationVersion);if(request!==calculationVersion)return;
    state.practice=p;state.hands=state.hands.map(h=>h.id===p.hand.id?p.hand:h);
   }else return;
   adoptPracticePlayer();state.handId=state.practice.hand.id;state.step=state.practice.hand.events.length;state.view='practice';state.notice='';nodeSetup();render();
@@ -2342,7 +2644,7 @@ root.addEventListener('click',e=>{
  if(a.startsWith('kuhn-')){handleKuhn(a,v);return;}
  if(a.startsWith('practice-')){handlePractice(a,v);return;}
  if(a==='learn-beliefs'){calculateLearning(true);return;}
- if(a==='export-tree'){if(state.ranking?.model==='coupled-cfr')download('range-lab-tree.json',JSON.stringify({hand:hand().id,step:state.step,...state.ranking},null,2),'application/json');return;}
+ if(a==='export-tree'){if(['exact-hand-cfr','coupled-cfr','hand-specific-all-in'].includes(state.ranking?.model))download('range-lab-tree.json',JSON.stringify({hand:hand().id,step:state.step,...state.ranking},null,2),'application/json');return;}
  if(a==='export-beliefs'){if(state.beliefNode)download('range-lab-beliefs.json',JSON.stringify({hand:hand().id,step:state.step,profiles:state.beliefNode.learned.profiles,images:state.beliefNode.learned.images,responses:state.beliefNode.responses,ranges:Object.fromEntries(Object.entries(state.beliefNode.ranges).map(([name,rows])=>[name,{types:typeMass(rows),combinations:comboMass(rows)}]))},null,2),'application/json');return;}
  if(a.startsWith('live-')){handleLive(a,v);return;}
  if(a==='home'){e.preventDefault();state.view='replay';render();}else if(a==='import')document.getElementById('import-files').click();else if(a==='export-response-ranges'){const ranges=v==='decision'?state.result?.responseRanges:state.ranking?.actions.find(x=>x.id===v)?.responseRanges;if(ranges)download('range-lab-response-ranges.json',JSON.stringify({hand:hand().id,eventIndex:state.step,model:'postflop-range',ranges},null,2),'application/json');}else if(a==='sample')sample();else if(a==='dismiss'){state.notice='';render();}else if(a==='export-project')exportProject();else if(a==='export-compact')exportCompact();else if(a==='export-txt'){const complete=state.hands.filter(h=>!h.live||h.live.complete);if(complete.length)download('range-lab-hands.txt',complete.map(h=>h.raw).join('\n\n\n')+'\n');if(complete.length<state.hands.length)toast('Only completed hands were exported as text. Export a project to save unfinished live hands.');}else if(a==='export-hand'){if(hand().live&&!hand().live.complete)toast('Export a project to save this unfinished live hand.');else download(hand().id+'.txt',hand().raw+'\n');}else if(a==='export-csv'){
@@ -2352,6 +2654,7 @@ root.addEventListener('click',e=>{
 root.addEventListener('change',e=>{
  const el=e.target,v=el.value,id=el.id;
  if(id==='analysis-engine'){state.config.engine=v==='legacy'?'legacy':'belief';invalidate();render();return;}
+ if(id==='cfr-iterations'){state.config.cfrIterations=[150,600,2000,8000].includes(Number(v))?Number(v):0;invalidate();render();return;}
  if(id==='tree-samples'){state.config.treeSamples=[200,600,2000].includes(Number(v))?Number(v):200;invalidate();render();return;}
  if(id==='new-player-name'){state.newPlayerName=v;return;}
  if(id==='practice-player'){if(state.loading||state.practice)return;if(state.playerProfiles.some(p=>p.id===v)){state.activePlayerId=v;render();}return;}
