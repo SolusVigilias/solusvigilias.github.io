@@ -10,6 +10,12 @@ Welcome. This is the home of **MirrorVerse** — a living philosophy of infinite
 - 💻 [MirrorVerse on GitHub](https://github.com/solusvigilias/mirrorverse)
 - ✨ [MirrorVerse Chat (coming soon)](/chat)
 
+<section class="labs-section" aria-labelledby="study-title">
+  <h2 id="study-title">Study &amp; Research</h2>
+  <p>A reusable MirrorVerse workspace for precise definitions, worked examples, checkable exercises, and research notes that keep uncertainty visible.</p>
+  <p><a class="lab-link" href="{{ '/study/' | relative_url }}">Explore Study &amp; Research &rarr;</a></p>
+</section>
+
 <section class="labs-section" aria-labelledby="labs-title">
   <h2 id="labs-title">Labs &amp; Experiments</h2>
   <p>Interactive spaces to explore models, test ideas, and inspect decisions.</p>

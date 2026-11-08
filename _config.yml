@@ -23,6 +23,8 @@ nav:
     link: "/project"
   - name: "Lab"
     link: "/lab/"
+  - name: "Study & Research"
+    link: "/study/"
   - name: "Chat"
     link: "/chat"
   - name: "About"
